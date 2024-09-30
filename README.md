@@ -1,2 +1,2 @@
-# SmartMed
-Smart Med Forms is an application designed to assist healthcare professionals in creating and managing forms that are typically used in consultations.
+# DASH
+DASH (Diagnóstico e Análise de Saúde Hospitalar) é uma aplicação feita para o auxílio de profissionais da saúde ao criar e gerenciar formulários tipicamente utilizados em consultas médicas.

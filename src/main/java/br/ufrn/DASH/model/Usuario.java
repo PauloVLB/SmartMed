@@ -1,5 +1,6 @@
 package br.ufrn.DASH.model;
 
+import br.ufrn.DASH.model.enums.TipoUsuario;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,15 +13,17 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class Prontuario {
+@AllArgsConstructor
+public class Usuario {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+   
     private String nome;
-    private String descricao;
-    private Boolean finalizado = false;
-    private Boolean ehPublico;
+    private String login;
+    private String senha;
+
+    private TipoUsuario tipoUsuario;
 }

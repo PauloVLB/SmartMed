@@ -1,3 +1,31 @@
 spring:
-    application:
-        name: DASH
+    h2:
+        console:
+            encoding: UTF-8
+            enabled: true
+            path: /h2-ui
+    datasource:
+        url: jdbc:h2:mem:testdb
+        username: sa
+        password: 
+        driver-class-name: org.h2.Driver
+    jpa:
+        # show-sql: true
+        database-platform: org.hibernate.dialect.H2Dialect
+        hibernate:
+            ddl-auto: update
+    # datasource:
+    #     url: jdbc:postgresql://localhost:5432/dash
+    #     username: postgres
+    #     password: postgres
+    # jpa:
+    #     database-platform: org.hibernate.dialect.PostgreSQLDialect
+    #     hibernate:
+    #         ddl-auto: update
+springdoc:
+    api-docs:
+        path: /v3/api-docs
+    swagger-ui:
+        path: /swagger-ui.html
+        operationsSorter: alpha
+        tagsSorter: alpha

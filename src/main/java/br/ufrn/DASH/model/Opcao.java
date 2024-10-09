@@ -22,4 +22,7 @@ public class Opcao {
     
     private String textoAlternativa;
     private Integer ordem;
+
+    @ManyToOne
+    private Quesito quesito;
 }

@@ -1,10 +1,17 @@
 package br.ufrn.DASH.model;
 
+
+import java.util.List;
+
 import br.ufrn.DASH.model.enums.TipoResposta;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,4 +38,19 @@ public class Quesito {
     private Resposta resposta;
 
     private TipoResposta tipoResposta;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quesito")
+    private List<Opcao> opcoes;
+
+    @ManyToMany
+    private List<Opcao> opcoesHabilitadoras; 
+
+    @ManyToOne
+    private Secao secao;
+
+    @ManyToOne
+    private Quesito superQuesito;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Quesito> subQuesitos;
 }

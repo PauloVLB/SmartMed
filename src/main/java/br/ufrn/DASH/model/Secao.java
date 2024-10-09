@@ -33,10 +33,11 @@ public class Secao {
 
     @ManyToOne
     private Secao superSecao;
+    
+    @ManyToOne
+    private Prontuario prontuario;
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Quesito> quesitos;
 
-    @ManyToOne
-    private Prontuario prontuario;
 }

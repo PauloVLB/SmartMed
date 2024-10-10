@@ -39,5 +39,4 @@ public class Secao {
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Quesito> quesitos;
-
 }

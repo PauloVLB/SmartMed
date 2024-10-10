@@ -1,6 +1,7 @@
 package br.ufrn.DASH.model;
 
 import java.util.List;
+import java.util.ArrayList;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,5 +33,5 @@ public class Prontuario {
     private Usuario usuario;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "prontuario")
-    private List<Secao> secoes;
+    private List<Secao> secoes = new ArrayList<Secao>();
 }

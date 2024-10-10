@@ -17,7 +17,11 @@ import br.ufrn.DASH.mapper.prontuario.ProntuarioCreate;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioMapper;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioOutput;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioUpdate;
+import br.ufrn.DASH.mapper.secao.SecaoCreate;
+import br.ufrn.DASH.mapper.secao.SecaoMapper;
+import br.ufrn.DASH.mapper.secao.SecaoOutput;
 import br.ufrn.DASH.model.Prontuario;
+import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.service.ProntuarioService;
 
 @RestController
@@ -29,6 +33,9 @@ public class ProntuarioController {
 
     @Autowired
     private ProntuarioMapper prontuarioMapper;
+
+    @Autowired
+    private SecaoMapper secaoMapper;
 
     @PostMapping
     public ResponseEntity<ProntuarioOutput> create(@RequestBody ProntuarioCreate prontuarioCreate) {
@@ -74,6 +81,14 @@ public class ProntuarioController {
     public ResponseEntity<Boolean> deleteAll() {
         prontuarioService.deleteAll();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PostMapping("/{idProntuario}/addSecao")
+    public ResponseEntity<SecaoOutput> addSecao(@PathVariable Long idProntuario, @RequestBody SecaoCreate secaoCreate) {
+        Secao secaoNova = secaoMapper.toSecaoFromCreate(secaoCreate);
+        Secao secaoCriada = prontuarioService.addSecao(idProntuario, secaoNova);
+        SecaoOutput secaoOutput = secaoMapper.toSecaoOutput(secaoCriada);
+        return new ResponseEntity<SecaoOutput>(secaoOutput, HttpStatus.CREATED);
     }
     
 

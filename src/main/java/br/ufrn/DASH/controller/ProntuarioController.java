@@ -23,7 +23,6 @@ import br.ufrn.DASH.mapper.secao.SecaoOutput;
 import br.ufrn.DASH.model.Prontuario;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.service.ProntuarioService;
-import br.ufrn.DASH.service.SecaoService;
 
 @RestController
 @RequestMapping("/prontuario")

@@ -58,9 +58,6 @@ public class ProntuarioService {
             return null;
         }
         
-        if(prontuario.getSecoes() == null) {
-            prontuario.setSecoes(new ArrayList<Secao>());
-        }
         secaoNova.setOrdem(prontuario.getSecoes().size());
         secaoNova.setNivel(1);
         secaoNova.setProntuario(prontuario);
@@ -69,9 +66,7 @@ public class ProntuarioService {
 
         prontuarioRepository.save(prontuario);
 
-        Prontuario prontuarioAtualizado = this.getById(idProntuario);
-
-        return prontuarioAtualizado.getSecoes().get(prontuarioAtualizado.getSecoes().size() - 1);
+        return prontuario.getSecoes().get(prontuario.getSecoes().size() - 1);
     }
 
 }

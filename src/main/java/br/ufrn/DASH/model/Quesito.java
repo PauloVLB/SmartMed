@@ -33,11 +33,10 @@ public class Quesito {
     private Boolean obrigatorio;
     private Integer ordem;
     private Integer nivel;
+    private TipoResposta tipoResposta;
 
     @OneToOne(mappedBy = "quesito")
     private Resposta resposta;
-
-    private TipoResposta tipoResposta;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quesito")
     private List<Opcao> opcoes;

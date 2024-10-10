@@ -1,6 +1,7 @@
 package br.ufrn.DASH.model;
 
 import java.util.List;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,21 +17,27 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class Prontuario {
-    
+@AllArgsConstructor
+public class Secao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nome;
-    private String descricao;
-    private Boolean finalizado = false;
-    private Boolean ehPublico;
+    
+    private String titulo;
+    private Integer ordem;
+    private Integer nivel;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Secao> subSecoes;
 
     @ManyToOne
-    private Usuario usuario;
+    private Secao superSecao;
+    
+    @ManyToOne
+    private Prontuario prontuario;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "prontuario")
-    private List<Secao> secoes;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Quesito> quesitos;
+
 }

@@ -9,5 +9,6 @@ public record SecaoOutput(
     Integer nivel,
     List<Long> subSecoesIds,
     Long superSecaoId,
-    Long prontuarioId)
+    Long prontuarioId,
+    List<Long> quesitosIds)
 {}

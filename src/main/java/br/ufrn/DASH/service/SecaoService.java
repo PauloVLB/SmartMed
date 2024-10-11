@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.repository.SecaoRepository;
 
@@ -63,5 +64,21 @@ public class SecaoService {
         secaoRepository.save(superSecao);
         
         return superSecao.getSubSecoes().get(superSecao.getSubSecoes().size() - 1);
+    }
+
+    public Quesito addQuesito(Long idSecao, Quesito quesito) {
+        Secao secao = this.getById(idSecao);
+        
+        if (secao == null) {
+            return null;
+        }
+        
+        quesito.setOrdem(secao.getQuesitos().size());
+        quesito.setNivel(1);
+        quesito.setSecao(secao);
+        secao.getQuesitos().add(quesito);
+        secaoRepository.save(secao);
+        
+        return secao.getQuesitos().get(secao.getQuesitos().size() - 1);
     }
 }

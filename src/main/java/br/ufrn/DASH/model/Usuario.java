@@ -1,6 +1,7 @@
 package br.ufrn.DASH.model;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import br.ufrn.DASH.model.enums.TipoUsuario;
 import br.ufrn.DASH.model.interfaces.GenericEntity;
@@ -32,5 +33,5 @@ public class Usuario implements GenericEntity{
     private TipoUsuario tipoUsuario;
 
     @OneToMany(mappedBy = "usuario")
-    private List<Prontuario> prontuarios;
+    private List<Prontuario> prontuarios = new ArrayList<Prontuario>();
 }

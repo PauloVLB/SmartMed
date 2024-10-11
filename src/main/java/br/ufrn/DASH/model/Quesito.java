@@ -2,6 +2,7 @@ package br.ufrn.DASH.model;
 
 
 import java.util.List;
+import java.util.ArrayList;
 
 import br.ufrn.DASH.model.enums.TipoResposta;
 import br.ufrn.DASH.model.interfaces.GenericEntity;
@@ -40,10 +41,10 @@ public class Quesito implements GenericEntity{
     private Resposta resposta;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quesito")
-    private List<Opcao> opcoes;
+    private List<Opcao> opcoes = new ArrayList<Opcao>();
 
     @ManyToMany
-    private List<Opcao> opcoesHabilitadoras; 
+    private List<Opcao> opcoesHabilitadoras = new ArrayList<Opcao>(); 
 
     @ManyToOne
     private Secao secao;
@@ -52,5 +53,5 @@ public class Quesito implements GenericEntity{
     private Quesito superQuesito;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Quesito> subQuesitos;
+    private List<Quesito> subQuesitos = new ArrayList<Quesito>();
 }

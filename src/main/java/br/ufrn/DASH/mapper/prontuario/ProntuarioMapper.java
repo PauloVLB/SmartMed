@@ -28,7 +28,6 @@ public interface ProntuarioMapper {
     @Mapping(target = "nome")
     @Mapping(target = "descricao")
     @Mapping(target = "ehPublico")
-    @Mapping(target = "ehTemplate")
     @Mapping(target = "finalizado")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "secoes", ignore = true)

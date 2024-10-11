@@ -26,7 +26,7 @@ public interface QuesitoMapper {
     @Mapping(target = "secao", ignore = true)
     @Mapping(target = "subQuesitos", ignore = true) 
     @Mapping(target = "superQuesito", ignore = true)
-    Quesito toQuesitoFromCreate(QuesitoCreate QuesitoCreate);
+    Quesito toQuesitoFromCreate(QuesitoCreate quesitoCreate);
 
     @Mapping(target = "enunciado")
     @Mapping(target = "obrigatorio")
@@ -40,7 +40,7 @@ public interface QuesitoMapper {
     @Mapping(target = "secao", ignore = true)
     @Mapping(target = "subQuesitos", ignore = true) 
     @Mapping(target = "superQuesito", ignore = true)
-    Quesito toQuesitoFromUpdate(QuesitoUpdate QuesitoUpdate);
+    Quesito toQuesitoFromUpdate(QuesitoUpdate quesitoUpdate);
 
     @Mapping(target = "id")
     @Mapping(target = "enunciado")

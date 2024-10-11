@@ -8,6 +8,7 @@ public record ProntuarioOutput(
     String descricao, 
     Boolean finalizado, 
     Boolean ehPublico,
+    Boolean ehTemplate,
     Long usuarioId,
     List<Long> secoesIds
     )

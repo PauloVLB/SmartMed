@@ -30,6 +30,7 @@ public class Prontuario implements GenericEntity{
     private String descricao;
     private Boolean finalizado = false;
     private Boolean ehPublico;
+    private Boolean ehTemplate;
 
     @ManyToOne
     private Usuario usuario;

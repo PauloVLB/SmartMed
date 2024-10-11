@@ -22,7 +22,7 @@ public interface SecaoMapper {
     @Mapping(target = "prontuario", ignore = true)
     @Mapping(target = "quesitos", ignore = true)
     @Mapping(target = "superSecao", ignore = true)
-    Secao toSecaoFromCreate(SecaoCreate SecaoCreate);
+    Secao toSecaoFromCreate(SecaoCreate secaoCreate);
 
     @Mapping(target = "titulo")
     @Mapping(target = "ordem")
@@ -32,7 +32,7 @@ public interface SecaoMapper {
     @Mapping(target = "prontuario", ignore = true)
     @Mapping(target = "quesitos", ignore = true)
     @Mapping(target = "superSecao", ignore = true)
-    Secao toSecaoFromUpdate(SecaoUpdate SecaoUpdate);
+    Secao toSecaoFromUpdate(SecaoUpdate secaoUpdate);
 
     @Mapping(target = "id")
     @Mapping(target = "titulo")

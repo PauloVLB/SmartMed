@@ -74,4 +74,12 @@ public class SecaoController {
         secaoService.deleteAll();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
+
+    @PostMapping("/{idSecao}/addSubSecao")
+    public ResponseEntity<SecaoOutput> addSubSecao(@PathVariable Long idSecao, @RequestBody SecaoCreate secaoCreate) {
+        Secao secaoNova = secaoMapper.toSecaoFromCreate(secaoCreate);
+        Secao secaoCriada = secaoService.addSubSecao(idSecao, secaoNova);
+        SecaoOutput secaoOutput = secaoMapper.toSecaoOutput(secaoCriada);
+        return new ResponseEntity<SecaoOutput>(secaoOutput, HttpStatus.CREATED);
+    }
 }

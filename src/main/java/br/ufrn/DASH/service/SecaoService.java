@@ -46,4 +46,22 @@ public class SecaoService {
     public void deleteAll() {
         secaoRepository.deleteAll();
     }
+
+    public Secao addSubSecao(Long idSuperSecao, Secao subSecao) {
+        Secao superSecao = this.getById(idSuperSecao);
+        
+        if (superSecao == null) {
+            return null;
+        }
+        
+        subSecao.setOrdem(superSecao.getSubSecoes().size());
+        subSecao.setNivel(superSecao.getNivel() + 1);
+        subSecao.setProntuario(superSecao.getProntuario());
+
+        subSecao.setSuperSecao(superSecao);
+        superSecao.getSubSecoes().add(subSecao);
+        secaoRepository.save(superSecao);
+        
+        return superSecao.getSubSecoes().get(superSecao.getSubSecoes().size() - 1);
+    }
 }

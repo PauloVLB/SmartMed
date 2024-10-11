@@ -1,7 +1,10 @@
 package br.ufrn.DASH.model;
 
 import java.util.List;
+import java.util.ArrayList;
+
 import br.ufrn.DASH.model.enums.TipoUsuario;
+import br.ufrn.DASH.model.interfaces.GenericEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,7 +20,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Usuario {
+public class Usuario implements GenericEntity{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,5 +33,5 @@ public class Usuario {
     private TipoUsuario tipoUsuario;
 
     @OneToMany(mappedBy = "usuario")
-    private List<Prontuario> prontuarios;
+    private List<Prontuario> prontuarios = new ArrayList<Prontuario>();
 }

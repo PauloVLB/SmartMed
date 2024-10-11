@@ -13,10 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.ufrn.DASH.mapper.quesito.QuesitoCreate;
+import br.ufrn.DASH.mapper.quesito.QuesitoMapper;
+import br.ufrn.DASH.mapper.quesito.QuesitoOutput;
 import br.ufrn.DASH.mapper.secao.SecaoCreate;
 import br.ufrn.DASH.mapper.secao.SecaoMapper;
 import br.ufrn.DASH.mapper.secao.SecaoOutput;
 import br.ufrn.DASH.mapper.secao.SecaoUpdate;
+import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.service.SecaoService;
 
@@ -29,6 +33,9 @@ public class SecaoController {
 
     @Autowired
     private SecaoMapper secaoMapper;
+
+    @Autowired
+    private QuesitoMapper quesitoMapper;
 
     @PostMapping
     public ResponseEntity<SecaoOutput> create(@RequestBody SecaoCreate secaoCreate) {
@@ -73,5 +80,21 @@ public class SecaoController {
     public ResponseEntity<Boolean> deleteAll() {
         secaoService.deleteAll();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PostMapping("/{idSecao}/addSubSecao")
+    public ResponseEntity<SecaoOutput> addSubSecao(@PathVariable Long idSecao, @RequestBody SecaoCreate secaoCreate) {
+        Secao secaoNova = secaoMapper.toSecaoFromCreate(secaoCreate);
+        Secao secaoCriada = secaoService.addSubSecao(idSecao, secaoNova);
+        SecaoOutput secaoOutput = secaoMapper.toSecaoOutput(secaoCriada);
+        return new ResponseEntity<SecaoOutput>(secaoOutput, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{idSecao}/addQuesito")
+    public ResponseEntity<QuesitoOutput> addQuesito(@PathVariable Long idSecao, @RequestBody QuesitoCreate quesitoCreate) {
+        Quesito quesitoNovo = quesitoMapper.toQuesitoFromCreate(quesitoCreate);
+        Quesito quesitoCriado = secaoService.addQuesito(idSecao, quesitoNovo);
+        QuesitoOutput quesitoOutput = quesitoMapper.toQuesitoOutput(quesitoCriado);
+        return new ResponseEntity<QuesitoOutput>(quesitoOutput, HttpStatus.CREATED);
     }
 }

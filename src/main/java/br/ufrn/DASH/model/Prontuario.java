@@ -1,6 +1,9 @@
 package br.ufrn.DASH.model;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import br.ufrn.DASH.model.interfaces.GenericEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +21,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Prontuario {
+public class Prontuario implements GenericEntity{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,5 +35,5 @@ public class Prontuario {
     private Usuario usuario;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "prontuario")
-    private List<Secao> secoes;
+    private List<Secao> secoes = new ArrayList<Secao>();
 }

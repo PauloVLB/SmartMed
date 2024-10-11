@@ -9,9 +9,10 @@ import org.mapstruct.Named;
 
 import br.ufrn.DASH.model.Prontuario;
 import br.ufrn.DASH.model.Usuario;
+import static br.ufrn.DASH.model.interfaces.Generics.TToIds;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface UsuarioMapper {
+public interface UsuarioMapper{
 
     @Mapping(target = "nome")
     @Mapping(target = "login")
@@ -39,9 +40,6 @@ public interface UsuarioMapper {
 
     @Named("prontuariosToIds")
     default List<Long> prontuariosToIds(List<Prontuario> secoes) {
-        if(secoes == null) {
-            return null;
-        }
-        return secoes.stream().map(Prontuario::getId).toList();
+        return TToIds(secoes);
     }
 }

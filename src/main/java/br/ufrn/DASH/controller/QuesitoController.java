@@ -1,6 +1,7 @@
 package br.ufrn.DASH.controller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +14,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.ufrn.DASH.mapper.opcao.OpcaoCreate;
+import br.ufrn.DASH.mapper.opcao.OpcaoMapper;
+import br.ufrn.DASH.mapper.opcao.OpcaoOutput;
 import br.ufrn.DASH.mapper.quesito.QuesitoCreate;
 import br.ufrn.DASH.mapper.quesito.QuesitoMapper;
 import br.ufrn.DASH.mapper.quesito.QuesitoOutput;
 import br.ufrn.DASH.mapper.quesito.QuesitoUpdate;
 import br.ufrn.DASH.mapper.secao.SecaoOutput;
+import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.service.QuesitoService;
@@ -31,6 +36,9 @@ public class QuesitoController {
 
     @Autowired
     private QuesitoMapper quesitoMapper;
+
+    @Autowired
+    private OpcaoMapper opcaoMapper;
 
     @PostMapping
     public ResponseEntity<QuesitoOutput> create(@RequestBody QuesitoCreate quesitoCreate) {
@@ -83,5 +91,13 @@ public class QuesitoController {
         Quesito quesitoCriado = quesitoService.addSubQuesito(idQuesito, quesitoNovo);
         QuesitoOutput quesitoOutput = quesitoMapper.toQuesitoOutput(quesitoCriado);
         return new ResponseEntity<QuesitoOutput>(quesitoOutput, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{idQuesito}/addOpcao")
+    public ResponseEntity<OpcaoOutput> addOpcao(@PathVariable Long idQuesito, @RequestBody OpcaoCreate opcaoCreate) {
+        Opcao opcaoNovo = opcaoMapper.toOpcaoFromCreate(opcaoCreate);
+        Opcao opcaoCriado = quesitoService.addOpcao(idQuesito, opcaoNovo);
+        OpcaoOutput opcaoOutput = opcaoMapper.toOpcaoOutput(opcaoCriado);
+        return new ResponseEntity<OpcaoOutput>(opcaoOutput, HttpStatus.CREATED);
     }
 }

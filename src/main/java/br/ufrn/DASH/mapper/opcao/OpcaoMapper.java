@@ -13,13 +13,13 @@ public interface OpcaoMapper {
     @Mapping(target = "ordem")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "quesito", ignore = true)
-    Opcao toOpcaoFromCreate(OpcaoCreate OpcaoCreate);
+    Opcao toOpcaoFromCreate(OpcaoCreate opcaoCreate);
 
     @Mapping(target = "textoAlternativa")
     @Mapping(target = "ordem")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "quesito", ignore = true)
-    Opcao toOpcaoFromUpdate(OpcaoUpdate OpcaoUpdate);
+    Opcao toOpcaoFromUpdate(OpcaoUpdate opcaoUpdate);
 
     @Mapping(target = "id")
     @Mapping(target = "textoAlternativa")

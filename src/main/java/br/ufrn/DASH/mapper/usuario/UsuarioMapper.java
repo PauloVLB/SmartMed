@@ -20,7 +20,7 @@ public interface UsuarioMapper{
     @Mapping(target = "tipoUsuario")    
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "prontuarios", ignore = true)
-    Usuario toUsuarioFromCreate(UsuarioCreate UsuarioCreate);
+    Usuario toUsuarioFromCreate(UsuarioCreate usuarioCreate);
 
     @Mapping(target = "nome")
     @Mapping(target = "login")
@@ -28,7 +28,7 @@ public interface UsuarioMapper{
     @Mapping(target = "tipoUsuario")    
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "prontuarios", ignore = true)
-    Usuario toUsuarioFromUpdate(UsuarioUpdate UsuarioUpdate);
+    Usuario toUsuarioFromUpdate(UsuarioUpdate usuarioUpdate);
     
     @Mapping(target = "id")
     @Mapping(target = "nome")

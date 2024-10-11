@@ -17,7 +17,9 @@ import br.ufrn.DASH.mapper.quesito.QuesitoCreate;
 import br.ufrn.DASH.mapper.quesito.QuesitoMapper;
 import br.ufrn.DASH.mapper.quesito.QuesitoOutput;
 import br.ufrn.DASH.mapper.quesito.QuesitoUpdate;
+import br.ufrn.DASH.mapper.secao.SecaoOutput;
 import br.ufrn.DASH.model.Quesito;
+import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.service.QuesitoService;
 
 @RestController
@@ -73,5 +75,13 @@ public class QuesitoController {
     public ResponseEntity<Boolean> deleteAll() {
         quesitoService.deleteAll();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PostMapping("/{idQuesito}/addSubQuesito")
+    public ResponseEntity<QuesitoOutput> addSubQuesito(@PathVariable Long idQuesito,@RequestBody QuesitoCreate quesitoCreate){
+        Quesito quesitoNovo = quesitoMapper.toQuesitoFromCreate(quesitoCreate);
+        Quesito quesitoCriado = quesitoService.addSubQuesito(idQuesito, quesitoNovo);
+        QuesitoOutput quesitoOutput = quesitoMapper.toQuesitoOutput(quesitoCriado);
+        return new ResponseEntity<QuesitoOutput>(quesitoOutput, HttpStatus.CREATED);
     }
 }

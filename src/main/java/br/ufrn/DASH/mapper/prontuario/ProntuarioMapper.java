@@ -9,6 +9,7 @@ import org.mapstruct.Named;
 
 import br.ufrn.DASH.model.Prontuario;
 import br.ufrn.DASH.model.Secao;
+import static br.ufrn.DASH.model.interfaces.Generics.TToIds;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ProntuarioMapper {
@@ -43,10 +44,7 @@ public interface ProntuarioMapper {
     
     @Named("secoesToIds")
     default List<Long> secoesToIds(List<Secao> secoes) {
-        if(secoes == null) {
-            return null;
-        }
-        return secoes.stream().map(Secao::getId).toList();
+        return TToIds(secoes);
     }
     
 }

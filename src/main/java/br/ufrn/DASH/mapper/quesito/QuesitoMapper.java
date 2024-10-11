@@ -9,6 +9,7 @@ import org.mapstruct.Named;
 
 import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Quesito;
+import static br.ufrn.DASH.model.interfaces.Generics.TToIds;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface QuesitoMapper {
@@ -57,17 +58,11 @@ public interface QuesitoMapper {
 
     @Named("opcoesToIds")
     default List<Long> opcoesToIds(List<Opcao> opcoes) {
-        if(opcoes == null) {
-            return null;
-        }
-        return opcoes.stream().map(Opcao::getId).toList();
+        return TToIds(opcoes);
     }
 
     @Named("subQuesitosToIds")
     default List<Long> subQuesitosToIds(List<Quesito> opcoes) {
-        if(opcoes == null) {
-            return null;
-        }
-        return opcoes.stream().map(Quesito::getId).toList();
+        return TToIds(opcoes);
     }
 }

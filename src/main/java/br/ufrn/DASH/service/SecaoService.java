@@ -74,7 +74,7 @@ public class SecaoService {
         }
         
         quesito.setOrdem(secao.getQuesitos().size());
-        quesito.setNivel(1);
+        quesito.setNivel(secao.getNivel() + 1);
         quesito.setSecao(secao);
         secao.getQuesitos().add(quesito);
         secaoRepository.save(secao);

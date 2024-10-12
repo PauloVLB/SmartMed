@@ -15,7 +15,7 @@ import br.ufrn.DASH.model.Resposta;
 public interface RespostaMapper {
     @Mapping(target = "conteudo")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "opcoesMarcadas", source = "opcoesMarcadasIds", qualifiedByName = "idsToOpcoes")
+    @Mapping(target = "opcoesMarcadas", ignore = true)
     @Mapping(target = "quesito", ignore = true)
     Resposta toRespostaFromCreate(RespostaCreate respostaCreate);
 

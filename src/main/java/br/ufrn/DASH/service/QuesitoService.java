@@ -59,7 +59,6 @@ public class QuesitoService {
         }
         subQuesito.setOrdem(superQuesito.getSubQuesitos().size());
         subQuesito.setNivel(superQuesito.getNivel() + 1);
-        subQuesito.setSecao(superQuesito.getSecao());
 
         subQuesito.setSuperQuesito(superQuesito);
         superQuesito.getSubQuesitos().add(subQuesito);
@@ -82,5 +81,25 @@ public class QuesitoService {
         quesitoRepository.save(quesito);
         
         return quesito.getOpcoes().get(quesito.getOpcoes().size() - 1);
+    }
+
+    public List<Opcao> getOpcoes(Long idQuesito) {
+        Quesito quesito = this.getById(idQuesito);
+        
+        if (quesito == null) {
+            return null;
+        }
+        
+        return quesito.getOpcoes();
+    }
+
+    public List<Quesito> getSubQuesitos(Long idQuesito) {
+        Quesito quesito = this.getById(idQuesito);
+        
+        if (quesito == null) {
+            return null;
+        }
+        
+        return quesito.getSubQuesitos();
     }
 }

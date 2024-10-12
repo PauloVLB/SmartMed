@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.ufrn.DASH.mapper.resposta.RespostaCreate;
@@ -19,7 +20,6 @@ import br.ufrn.DASH.mapper.resposta.RespostaOutput;
 import br.ufrn.DASH.mapper.resposta.RespostaUpdate;
 import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.service.RespostaService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
 @RequestMapping("/resposta")

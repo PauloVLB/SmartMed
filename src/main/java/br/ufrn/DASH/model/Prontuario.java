@@ -37,4 +37,21 @@ public class Prontuario implements GenericEntity{
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "prontuario")
     private List<Secao> secoes = new ArrayList<Secao>();
+
+    public Prontuario duplicar(Usuario novoUsuario) {
+        Prontuario prontuario = new Prontuario();
+        prontuario.setNome(this.nome + " - Cópia");
+        prontuario.setDescricao(this.descricao);
+        prontuario.setEhPublico(this.ehPublico);
+        prontuario.setEhTemplate(this.ehTemplate);
+        prontuario.setUsuario(novoUsuario);
+
+        for (Secao secao : this.secoes) {
+            Secao novaSecao = secao.duplicar();
+            novaSecao.setProntuario(prontuario);
+            prontuario.getSecoes().add(novaSecao);
+        }
+
+        return prontuario;
+    }
 }

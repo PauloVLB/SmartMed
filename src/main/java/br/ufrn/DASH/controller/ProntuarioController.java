@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.ufrn.DASH.mapper.prontuario.ProntuarioCreate;
@@ -89,6 +90,16 @@ public class ProntuarioController {
         Secao secaoCriada = prontuarioService.addSecao(idProntuario, secaoNova);
         SecaoOutput secaoOutput = secaoMapper.toSecaoOutput(secaoCriada);
         return new ResponseEntity<SecaoOutput>(secaoOutput, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{idProntuario}/duplicar")
+    public ResponseEntity<ProntuarioOutput> duplicar(
+        @PathVariable Long idProntuario,
+        @RequestParam Long idUsuario                                                      
+    ) {
+        Prontuario prontuarioDuplicado = prontuarioService.duplicar(idProntuario, idUsuario);
+        ProntuarioOutput prontuarioOutput = prontuarioMapper.toProntuarioOutput(prontuarioDuplicado);
+        return new ResponseEntity<ProntuarioOutput>(prontuarioOutput, HttpStatus.CREATED);
     }
     
 

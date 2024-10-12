@@ -57,7 +57,6 @@ public class SecaoService {
         
         subSecao.setOrdem(superSecao.getSubSecoes().size());
         subSecao.setNivel(superSecao.getNivel() + 1);
-        subSecao.setProntuario(superSecao.getProntuario());
 
         subSecao.setSuperSecao(superSecao);
         superSecao.getSubSecoes().add(subSecao);
@@ -80,5 +79,25 @@ public class SecaoService {
         secaoRepository.save(secao);
         
         return secao.getQuesitos().get(secao.getQuesitos().size() - 1);
+    }
+
+    public List<Quesito> getQuesitos(Long idSecao) {
+        Secao secao = this.getById(idSecao);
+        
+        if (secao == null) {
+            return null;
+        }
+        
+        return secao.getQuesitos();
+    }
+
+    public List<Secao> getSubSecoes(Long idSecao) {
+        Secao secao = this.getById(idSecao);
+        
+        if (secao == null) {
+            return null;
+        }
+        
+        return secao.getSubSecoes();
     }
 }

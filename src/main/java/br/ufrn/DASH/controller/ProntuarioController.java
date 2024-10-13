@@ -1,6 +1,7 @@
 package br.ufrn.DASH.controller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,14 @@ import br.ufrn.DASH.mapper.prontuario.ProntuarioCreate;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioMapper;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioOutput;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioUpdate;
+import br.ufrn.DASH.mapper.resposta.RespostaCreate;
+import br.ufrn.DASH.mapper.resposta.RespostaMapper;
+import br.ufrn.DASH.mapper.resposta.RespostaOutput;
 import br.ufrn.DASH.mapper.secao.SecaoCreate;
 import br.ufrn.DASH.mapper.secao.SecaoMapper;
 import br.ufrn.DASH.mapper.secao.SecaoOutput;
 import br.ufrn.DASH.model.Prontuario;
+import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.service.ProntuarioService;
 
@@ -36,6 +41,9 @@ public class ProntuarioController {
 
     @Autowired
     private SecaoMapper secaoMapper;
+
+    @Autowired
+    private RespostaMapper respostaMapper;
 
     @PostMapping
     public ResponseEntity<ProntuarioOutput> create(@RequestBody ProntuarioCreate prontuarioCreate) {
@@ -91,5 +99,13 @@ public class ProntuarioController {
         return new ResponseEntity<SecaoOutput>(secaoOutput, HttpStatus.CREATED);
     }
     
+    @PostMapping("/{idProntuario}/quesito/{idQuesito}/addResposta")
+    public ResponseEntity<RespostaOutput> addResposta(@PathVariable Long idProntuario, @PathVariable Long idQuesito, @RequestBody RespostaCreate respostaCreate){
+        Resposta respostaNova = respostaMapper.toRespostaFromCreate(respostaCreate);
+        Resposta respostaCriada = prontuarioService.addResposta(idProntuario, idQuesito, respostaNova);
+        RespostaOutput respostaOutput = respostaMapper.toRespostaOutput(respostaCriada);
+        return new ResponseEntity<RespostaOutput>(respostaOutput, HttpStatus.CREATED);
+        
+    }
 
 }

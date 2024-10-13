@@ -1,10 +1,13 @@
 package br.ufrn.DASH.service;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.ufrn.DASH.model.Prontuario;
+import br.ufrn.DASH.model.Quesito;
+import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.repository.ProntuarioRepository;
 
@@ -13,6 +16,12 @@ public class ProntuarioService {
 
     @Autowired
     private ProntuarioRepository prontuarioRepository;
+
+    @Autowired
+    private RespostaService respostaService;
+
+    @Autowired
+    private QuesitoService quesitoService;
 
     public Prontuario create(Prontuario prontuario) {
         return prontuarioRepository.save(prontuario);
@@ -66,6 +75,18 @@ public class ProntuarioService {
         prontuarioRepository.save(prontuario);
 
         return prontuario.getSecoes().get(prontuario.getSecoes().size() - 1);
+    }
+
+    public Resposta addResposta(Long idProntuario, Long idQuesito, Resposta respostaNova) {
+        Resposta respostaCriada = respostaService.create(respostaNova);
+        Quesito quesito = quesitoService.getById(idQuesito);
+        quesito.setResposta(respostaCriada);
+        respostaCriada.setQuesito(quesito);
+        
+        // talvez mudar isso para sintaxe melhor
+        quesitoService.create(quesito);
+        return respostaService.create(respostaCriada);
+
     }
 
 }

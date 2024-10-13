@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.repository.RespostaRepository;
 
@@ -13,6 +14,9 @@ public class RespostaService {
     
     @Autowired
     private RespostaRepository respostaRepository;
+
+    @Autowired
+    private OpcaoService opcaoService;
 
     public Resposta create(Resposta resposta) {
         return respostaRepository.save(resposta);
@@ -43,6 +47,24 @@ public class RespostaService {
 
     public void deleteAll() {
         respostaRepository.deleteAll();
+    }
+
+    public Opcao addOpcaoMarcada(Long idResposta, Long idOpcao) {
+        Resposta resposta = this.getById(idResposta);
+        Opcao opcao = opcaoService.getById(idOpcao);
+
+        if(resposta == null){
+            return null;
+        }
+        if(opcao == null){
+            return null;
+        }
+
+        resposta.getOpcoesMarcadas().add(opcao);
+        respostaRepository.save(resposta);
+
+        return resposta.getOpcoesMarcadas().get(resposta.getOpcoesMarcadas().size() - 1);
+
     }
 
 }

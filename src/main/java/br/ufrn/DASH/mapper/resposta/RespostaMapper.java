@@ -40,7 +40,7 @@ public interface RespostaMapper {
     @Named("quesitoToId")
     default Long quesitoToId(Quesito quesito) {
         if(quesito == null){
-            return 0L;
+            return null;
         }
         return quesito.getId();
     }

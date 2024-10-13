@@ -78,10 +78,17 @@ public class ProntuarioService {
     }
 
     public Resposta addResposta(Long idProntuario, Long idQuesito, Resposta respostaNova) {
-        Resposta respostaCriada = respostaService.create(respostaNova);
         Quesito quesito = quesitoService.getById(idQuesito);
-        quesito.setResposta(respostaCriada);
-        respostaCriada.setQuesito(quesito);
+        Resposta respostaCriada;
+        if(quesito.getResposta() == null){
+            respostaCriada = respostaService.create(respostaNova);
+            quesito.setResposta(respostaCriada);
+            respostaCriada.setQuesito(quesito);            
+        }else{
+            respostaCriada = respostaService.getById(quesito.getResposta().getId());
+
+            respostaCriada.setConteudo(respostaNova.getConteudo());
+        }
         
         // talvez mudar isso para sintaxe melhor
         quesitoService.create(quesito);

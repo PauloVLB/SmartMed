@@ -89,4 +89,8 @@ public class ProntuarioService {
 
     }
 
+    public boolean ehTemplate(Long idProntuario) {
+        return this.getById(idProntuario).getEhTemplate();
+    }
+
 }

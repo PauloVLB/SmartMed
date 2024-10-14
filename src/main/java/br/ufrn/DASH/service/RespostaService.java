@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Resposta;
+import br.ufrn.DASH.model.enums.TipoResposta;
 import br.ufrn.DASH.repository.RespostaRepository;
 
 @Service
@@ -60,7 +61,16 @@ public class RespostaService {
             return null;
         }
 
-        resposta.getOpcoesMarcadas().add(opcao);
+        if(resposta.getQuesito().getTipoResposta() == TipoResposta.OBJETIVA_SIMPLES){
+            if(resposta.getOpcoesMarcadas().isEmpty()){
+                resposta.getOpcoesMarcadas().add(opcao);
+            }
+        }
+
+        if(resposta.getQuesito().getTipoResposta() == TipoResposta.OBJETIVA_MULTIPLA){
+            resposta.getOpcoesMarcadas().add(opcao);
+        }
+
         respostaRepository.save(resposta);
 
         return resposta.getOpcoesMarcadas().get(resposta.getOpcoesMarcadas().size() - 1);

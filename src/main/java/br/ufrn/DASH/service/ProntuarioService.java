@@ -78,6 +78,7 @@ public class ProntuarioService {
     }
 
     public Resposta addResposta(Long idProntuario, Long idQuesito, Resposta respostaNova) {
+        if(this.getById(idProntuario).getEhTemplate())return null;
         Quesito quesito = quesitoService.getById(idQuesito);
         Resposta respostaCriada;
         if(quesito.getResposta() == null){
@@ -94,10 +95,6 @@ public class ProntuarioService {
         quesitoService.create(quesito);
         return respostaService.create(respostaCriada);
 
-    }
-
-    public boolean ehTemplate(Long idProntuario) {
-        return this.getById(idProntuario).getEhTemplate();
     }
 
 }

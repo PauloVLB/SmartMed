@@ -101,16 +101,10 @@ public class ProntuarioController {
     
     @PostMapping("/{idProntuario}/quesito/{idQuesito}/addResposta")
     public ResponseEntity<RespostaOutput> addResposta(@PathVariable Long idProntuario, @PathVariable Long idQuesito, @RequestBody RespostaCreate respostaCreate){
-        if(!prontuarioService.ehTemplate(idProntuario)){
-            Resposta respostaNova = respostaMapper.toRespostaFromCreate(respostaCreate);
-            Resposta respostaCriada = prontuarioService.addResposta(idProntuario, idQuesito, respostaNova);
-            RespostaOutput respostaOutput = respostaMapper.toRespostaOutput(respostaCriada);
-            return new ResponseEntity<RespostaOutput>(respostaOutput, HttpStatus.CREATED);            
-        }
-        
-        // TODO: qual o melhor httpstatus para esse cenário?
-        return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
-        
+        Resposta respostaNova = respostaMapper.toRespostaFromCreate(respostaCreate);
+        Resposta respostaCriada = prontuarioService.addResposta(idProntuario, idQuesito, respostaNova);
+        RespostaOutput respostaOutput = respostaMapper.toRespostaOutput(respostaCriada);
+        return new ResponseEntity<RespostaOutput>(respostaOutput, HttpStatus.CREATED);                    
     }
 
 }

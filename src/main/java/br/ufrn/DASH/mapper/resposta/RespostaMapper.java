@@ -8,7 +8,6 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.Named;
 
 import br.ufrn.DASH.model.Opcao;
-import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Resposta;
 import static br.ufrn.DASH.model.interfaces.Generics.TToIds;
 
@@ -29,19 +28,11 @@ public interface RespostaMapper {
     @Mapping(target = "conteudo")
     @Mapping(target = "id")
     @Mapping(target = "opcoesMarcadasIds", source = "opcoesMarcadas", qualifiedByName = "opcoesToIds")
-    @Mapping(target = "idQuesito", source = "quesito", qualifiedByName="quesitoToId")
+    @Mapping(target = "idQuesito", source = "quesito.id")
     RespostaOutput toRespostaOutput(Resposta resposta);
 
     @Named("opcoesToIds")
     default List<Long> opcoesToIds(List<Opcao> opcoes) {
         return TToIds(opcoes);
-    }
-
-    @Named("quesitoToId")
-    default Long quesitoToId(Quesito quesito) {
-        if(quesito == null){
-            return null;
-        }
-        return quesito.getId();
     }
 }

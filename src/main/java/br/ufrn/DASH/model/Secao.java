@@ -41,4 +41,25 @@ public class Secao implements GenericEntity{
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Quesito> quesitos = new ArrayList<Quesito>();
+
+    public Secao duplicar() {
+        Secao secao = new Secao();
+        secao.setTitulo(this.titulo);
+        secao.setOrdem(this.ordem);
+        secao.setNivel(this.nivel);
+
+        for (Secao subSecao : this.subSecoes) {
+            Secao novaSubSecao = subSecao.duplicar();
+            novaSubSecao.setSuperSecao(secao);
+            secao.getSubSecoes().add(novaSubSecao);
+        }
+
+        for (Quesito quesito : this.quesitos) {
+            Quesito novoQuesito = quesito.duplicar();
+            novoQuesito.setSecao(secao);
+            secao.getQuesitos().add(novoQuesito);
+        }
+
+        return secao;
+    }
 }

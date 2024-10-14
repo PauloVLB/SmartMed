@@ -9,6 +9,7 @@ import br.ufrn.DASH.model.Prontuario;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.Secao;
+import br.ufrn.DASH.model.Usuario;
 import br.ufrn.DASH.repository.ProntuarioRepository;
 
 @Service
@@ -16,6 +17,9 @@ public class ProntuarioService {
 
     @Autowired
     private ProntuarioRepository prontuarioRepository;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @Autowired
     private RespostaService respostaService;
@@ -77,6 +81,22 @@ public class ProntuarioService {
         return prontuario.getSecoes().get(prontuario.getSecoes().size() - 1);
     }
 
+    public Prontuario duplicar(Long idProntuario, Long idUsuario) {
+        Prontuario prontuarioToDuplicate = this.getById(idProntuario);
+
+        if(prontuarioToDuplicate == null) {
+            return null;
+        }
+
+        Usuario novoUsuario = usuarioService.getById(idUsuario);
+        if(novoUsuario == null) {
+            return null;
+        }
+
+        Prontuario prontuarioDuplicado = prontuarioToDuplicate.duplicar(novoUsuario);
+        return prontuarioRepository.save(prontuarioDuplicado);
+    }
+    
     public Resposta addResposta(Long idProntuario, Long idQuesito, Resposta respostaNova) {
         if(this.getById(idProntuario).getEhTemplate())return null;
         Quesito quesito = quesitoService.getById(idQuesito);

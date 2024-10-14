@@ -24,6 +24,7 @@ import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.service.SecaoService;
 
+
 @RestController
 @RequestMapping("/secao")
 public class SecaoController {
@@ -97,4 +98,25 @@ public class SecaoController {
         QuesitoOutput quesitoOutput = quesitoMapper.toQuesitoOutput(quesitoCriado);
         return new ResponseEntity<QuesitoOutput>(quesitoOutput, HttpStatus.CREATED);
     }
+
+    @GetMapping("/{idSecao}/quesitos")
+    public ResponseEntity<List<QuesitoOutput>> getQuesitos(@PathVariable Long idSecao) {
+        List<Quesito> quesitos = secaoService.getQuesitos(idSecao);
+        List<QuesitoOutput> quesitosOutput = quesitos
+                .stream()
+                .map(quesitoMapper::toQuesitoOutput)
+                .toList();
+        return new ResponseEntity<List<QuesitoOutput>>(quesitosOutput, HttpStatus.OK);
+    }
+
+    @GetMapping("/{idSecao}/subSecoes")
+    public ResponseEntity<List<SecaoOutput>> getSubSecoes(@PathVariable Long idSecao) {
+        List<Secao> subSecoes = secaoService.getSubSecoes(idSecao);
+        List<SecaoOutput> subSecoesOutput = subSecoes
+                .stream()
+                .map(secaoMapper::toSecaoOutput)
+                .toList();
+        return new ResponseEntity<List<SecaoOutput>>(subSecoesOutput, HttpStatus.OK);
+    }
+    
 }

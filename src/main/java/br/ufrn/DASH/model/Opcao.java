@@ -26,4 +26,12 @@ public class Opcao implements GenericEntity{
 
     @ManyToOne
     private Quesito quesito;
+
+    public Opcao duplicar() {
+        Opcao opcao = new Opcao();
+        opcao.setTextoAlternativa(this.textoAlternativa);
+        opcao.setOrdem(this.ordem);
+
+        return opcao;
+    }
 }

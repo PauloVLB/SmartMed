@@ -21,10 +21,8 @@ import br.ufrn.DASH.mapper.quesito.QuesitoCreate;
 import br.ufrn.DASH.mapper.quesito.QuesitoMapper;
 import br.ufrn.DASH.mapper.quesito.QuesitoOutput;
 import br.ufrn.DASH.mapper.quesito.QuesitoUpdate;
-import br.ufrn.DASH.mapper.secao.SecaoOutput;
 import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Quesito;
-import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.service.QuesitoService;
 
 @RestController
@@ -99,5 +97,25 @@ public class QuesitoController {
         Opcao opcaoCriado = quesitoService.addOpcao(idQuesito, opcaoNovo);
         OpcaoOutput opcaoOutput = opcaoMapper.toOpcaoOutput(opcaoCriado);
         return new ResponseEntity<OpcaoOutput>(opcaoOutput, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{idQuesito}/opcoes")
+    public ResponseEntity<List<OpcaoOutput>> getOpcoes(@PathVariable Long idQuesito) {
+        List<Opcao> opcoes = quesitoService.getOpcoes(idQuesito);
+        List<OpcaoOutput> opcoesOutput = opcoes
+                .stream()
+                .map(opcaoMapper::toOpcaoOutput)
+                .toList();
+        return new ResponseEntity<List<OpcaoOutput>>(opcoesOutput, HttpStatus.OK);
+    }
+
+    @GetMapping("/{idQuesito}/subQuesitos")
+    public ResponseEntity<List<QuesitoOutput>> getSubQuesitos(@PathVariable Long idQuesito) {
+        List<Quesito> subQuesitos = quesitoService.getSubQuesitos(idQuesito);
+        List<QuesitoOutput> subQuesitosOutput = subQuesitos
+                .stream()
+                .map(quesitoMapper::toQuesitoOutput)
+                .toList();
+        return new ResponseEntity<List<QuesitoOutput>>(subQuesitosOutput, HttpStatus.OK);
     }
 }

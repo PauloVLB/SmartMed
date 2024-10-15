@@ -3,6 +3,8 @@ package br.ufrn.DASH.mapper.resposta;
 import java.util.List;
 
 public record RespostaOutput(
+    Long id,
     List<String>conteudo,
-    Long id)
+    List<Long> opcoesMarcadasIds,
+    Long idQuesito)
 {}

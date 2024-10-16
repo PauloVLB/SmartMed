@@ -10,6 +10,7 @@ import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.model.Usuario;
+import static br.ufrn.DASH.model.interfaces.Generics.alterarOrdem;
 import br.ufrn.DASH.repository.ProntuarioRepository;
 
 @Service
@@ -70,7 +71,8 @@ public class ProntuarioService {
             return null;
         }
         
-        secaoNova.setOrdem(prontuario.getSecoes().size());
+        // secaoNova.setOrdem(prontuario.getSecoes().size());
+        alterarOrdem(prontuario.getSecoes(), secaoNova.getOrdem());
         secaoNova.setNivel(1);
         secaoNova.setProntuario(prontuario);
 

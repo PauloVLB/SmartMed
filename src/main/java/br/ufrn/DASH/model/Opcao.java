@@ -1,6 +1,7 @@
 package br.ufrn.DASH.model;
 
 import br.ufrn.DASH.model.interfaces.GenericEntity;
+import br.ufrn.DASH.model.interfaces.Ordenavel;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,7 +17,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Opcao implements GenericEntity{
+public class Opcao implements GenericEntity, Ordenavel{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

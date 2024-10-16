@@ -114,7 +114,13 @@ public class ProntuarioService {
         // talvez mudar isso para sintaxe melhor
         quesitoService.create(quesito);
         return respostaService.create(respostaCriada);
+    }
 
+    public Prontuario addProntuarioFromTemplate(Long idTemplate) {
+        Prontuario prontuarioTemplate = this.getById(idTemplate);
+        if(prontuarioTemplate == null || !prontuarioTemplate.getEhTemplate()) return null;
+        Prontuario prontuarioCriado = prontuarioTemplate.duplicar(null);
+        return prontuarioRepository.save(prontuarioCriado);
     }
 
 }

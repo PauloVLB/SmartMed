@@ -118,4 +118,11 @@ public class ProntuarioController {
         return new ResponseEntity<RespostaOutput>(respostaOutput, HttpStatus.CREATED);                    
     }
 
+    @PostMapping("/template/{idTemplate}/addProntuario")
+    public ResponseEntity<ProntuarioOutput> addProntuarioFromTemplate(@PathVariable Long idTemplate) {
+        Prontuario prontuarioCriado = prontuarioService.addProntuarioFromTemplate(idTemplate);
+        ProntuarioOutput prontuarioOutput = prontuarioMapper.toProntuarioOutput(prontuarioCriado);
+        return new ResponseEntity<ProntuarioOutput>(prontuarioOutput, HttpStatus.CREATED);
+    }
+
 }

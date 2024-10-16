@@ -1,11 +1,14 @@
 package br.ufrn.DASH.service;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Secao;
+import static br.ufrn.DASH.model.interfaces.Generics.alterarOrdem;
+import static br.ufrn.DASH.model.interfaces.Generics.ordenar;
 import br.ufrn.DASH.repository.SecaoRepository;
 
 @Service
@@ -19,11 +22,21 @@ public class SecaoService {
     }
 
     public List<Secao> getAll() {
-        return secaoRepository.findAll();
+        List<Secao> retorno = secaoRepository.findAll();
+        for (Secao secao : retorno) {
+            ordenar(secao.getSubSecoes());
+            ordenar(secao.getQuesitos());
+        }
+        return retorno;
     }
 
     public Secao getById(Long id) {
-        return secaoRepository.findById(id).orElse(null);
+        Secao retorno = secaoRepository.findById(id).orElse(null);
+        if(retorno != null){
+            ordenar(retorno.getSubSecoes());
+            ordenar(retorno.getQuesitos());
+        }
+        return retorno;
     }
 
     public Secao update(Long id, Secao secao) {
@@ -55,7 +68,8 @@ public class SecaoService {
             return null;
         }
         
-        subSecao.setOrdem(superSecao.getSubSecoes().size());
+        // subSecao.setOrdem(superSecao.getSubSecoes().size());
+        alterarOrdem(superSecao.getSubSecoes(), subSecao.getOrdem());
         subSecao.setNivel(superSecao.getNivel() + 1);
 
         subSecao.setSuperSecao(superSecao);
@@ -72,7 +86,8 @@ public class SecaoService {
             return null;
         }
         
-        quesito.setOrdem(secao.getQuesitos().size());
+        // quesito.setOrdem(secao.getQuesitos().size());
+        alterarOrdem(secao.getQuesitos(), quesito.getOrdem());
         quesito.setNivel(secao.getNivel() + 1);
         quesito.setSecao(secao);
         secao.getQuesitos().add(quesito);

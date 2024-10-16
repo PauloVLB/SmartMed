@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Quesito;
+import static br.ufrn.DASH.model.interfaces.Generics.alterarOrdem;
+import static br.ufrn.DASH.model.interfaces.Generics.ordenar;
 import br.ufrn.DASH.repository.QuesitoRepository;
 
 @Service
@@ -20,11 +22,17 @@ public class QuesitoService {
     }
 
     public List<Quesito> getAll() {
-        return quesitoRepository.findAll();
+        List<Quesito> retorno = quesitoRepository.findAll();
+        for (Quesito quesito : retorno) {
+            ordenar(quesito.getSubQuesitos());
+        }
+        return retorno;
     }
 
     public Quesito getById(Long id) {
-        return quesitoRepository.findById(id).orElse(null);
+        Quesito retorno = quesitoRepository.findById(id).orElse(null);
+        ordenar(retorno.getSubQuesitos());
+        return retorno;
     }
 
     public Quesito update(Long id, Quesito quesito) {
@@ -57,7 +65,8 @@ public class QuesitoService {
         if(superQuesito == null){
             return null;
         }
-        subQuesito.setOrdem(superQuesito.getSubQuesitos().size());
+        // subQuesito.setOrdem(superQuesito.getSubQuesitos().size());
+        alterarOrdem(superQuesito.getSubQuesitos(), subQuesito.getOrdem());
         subQuesito.setNivel(superQuesito.getNivel() + 1);
 
         subQuesito.setSuperQuesito(superQuesito);

@@ -11,6 +11,7 @@ import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.model.Usuario;
 import static br.ufrn.DASH.model.interfaces.Generics.alterarOrdem;
+import static br.ufrn.DASH.model.interfaces.Generics.ordenar;
 import br.ufrn.DASH.repository.ProntuarioRepository;
 
 @Service
@@ -33,11 +34,17 @@ public class ProntuarioService {
     }
 
     public List<Prontuario> getAll() {
-        return prontuarioRepository.findAll();
+        List<Prontuario> retorno = prontuarioRepository.findAll();
+        for (Prontuario prontuario : retorno) {
+            ordenar(prontuario.getSecoes());
+        }
+        return retorno;
     }
 
     public Prontuario getById(Long id) {
-        return prontuarioRepository.findById(id).orElse(null);
+        Prontuario retorno = prontuarioRepository.findById(id).orElse(null);
+        if(retorno != null)ordenar(retorno.getSecoes());
+        return retorno;
     }
 
     public Prontuario update(Long id, Prontuario prontuario) {

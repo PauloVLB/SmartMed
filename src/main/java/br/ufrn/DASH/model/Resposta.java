@@ -3,7 +3,7 @@ package br.ufrn.DASH.model;
 import java.util.List;
 import java.util.ArrayList;
 
-import br.ufrn.DASH.model.interfaces.GenericEntity;
+import br.ufrn.DASH.model.interfaces.DashEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -21,7 +21,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Resposta implements GenericEntity{
+public class Resposta implements DashEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

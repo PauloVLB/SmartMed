@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Generics {
-    public static <T extends GenericEntity> List<Long> TToIds(List<T> input){
+    public static <T extends DashEntity> List<Long> TToIds(List<T> input){
         if(input == null) {
             return null;
     }

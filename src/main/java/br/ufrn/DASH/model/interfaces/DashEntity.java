@@ -1,5 +1,5 @@
 package br.ufrn.DASH.model.interfaces;
 
-public interface GenericEntity {
+public interface DashEntity {
     abstract Long getId();
 }

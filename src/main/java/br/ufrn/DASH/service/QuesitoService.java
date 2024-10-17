@@ -25,6 +25,7 @@ public class QuesitoService {
         List<Quesito> retorno = quesitoRepository.findAll();
         for (Quesito quesito : retorno) {
             ordenar(quesito.getSubQuesitos());
+            ordenar(quesito.getOpcoes());
         }
         return retorno;
     }
@@ -32,6 +33,7 @@ public class QuesitoService {
     public Quesito getById(Long id) {
         Quesito retorno = quesitoRepository.findById(id).orElse(null);
         ordenar(retorno.getSubQuesitos());
+        ordenar(retorno.getOpcoes());
         return retorno;
     }
 
@@ -84,7 +86,7 @@ public class QuesitoService {
             return null;
         }
         
-        opcaoNovo.setOrdem(quesito.getOpcoes().size());
+        alterarOrdem(quesito.getOpcoes(), opcaoNovo.getOrdem());
         opcaoNovo.setQuesito(quesito);
         quesito.getOpcoes().add(opcaoNovo);
         quesitoRepository.save(quesito);

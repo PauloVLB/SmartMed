@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.model.Prontuario;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Resposta;
@@ -36,7 +37,10 @@ public class ProntuarioService {
     }
 
     public Prontuario getById(Long id) {
-        return prontuarioRepository.findById(id).orElse(null);
+        return prontuarioRepository.findById(id)
+            .orElseThrow(
+                () -> new EntityNotFoundException(id, new Prontuario())
+            );
     }
 
     public Prontuario update(Long id, Prontuario prontuario) {

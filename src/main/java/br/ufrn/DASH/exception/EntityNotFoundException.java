@@ -8,7 +8,7 @@ public class EntityNotFoundException extends DashException {
     private final Long id;
     private final String entityName;
 
-    public EntityNotFoundException(GenericEntity cause) {
+    public EntityNotFoundException(Long id, GenericEntity cause) {
         super();
         this.id = cause.getId();
         this.entityName = cause.getClass().getSimpleName();
@@ -16,6 +16,6 @@ public class EntityNotFoundException extends DashException {
     
     @Override
     public String getMessage() {
-        return "Entity not found";
+        return "Entity " + entityName + " with id " + id + " not found";
     }
 }

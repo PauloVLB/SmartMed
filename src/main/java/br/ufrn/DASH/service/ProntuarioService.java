@@ -1,6 +1,7 @@
 package br.ufrn.DASH.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.exception.ProntuarioNotTemplateException;
 import br.ufrn.DASH.exception.ProntuarioTemplateException;
+import br.ufrn.DASH.exception.QuesitoNotInProntuarioException;
 import br.ufrn.DASH.model.Prontuario;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Resposta;
@@ -107,6 +109,7 @@ public class ProntuarioService {
     public Resposta addResposta(Long idProntuario, Long idQuesito, Resposta respostaNova) {
         if(this.getById(idProntuario).getEhTemplate())throw new ProntuarioTemplateException(idProntuario);
         Quesito quesito = quesitoService.getById(idQuesito);
+        if(!relacionadas(idProntuario, quesito))throw new QuesitoNotInProntuarioException(idProntuario, idQuesito);
         Resposta respostaCriada;
         if(quesito.getResposta() == null){
             respostaCriada = respostaService.create(respostaNova);
@@ -128,6 +131,20 @@ public class ProntuarioService {
         if(/*prontuarioTemplate == null ||*/ !prontuarioTemplate.getEhTemplate()) throw new ProntuarioNotTemplateException(idTemplate);
         Prontuario prontuarioCriado = prontuarioTemplate.duplicar(null);
         return prontuarioRepository.save(prontuarioCriado);
+    }
+
+    private boolean relacionadas(Long idProntuario, Quesito quesito){
+        Quesito busca = quesito;
+        Secao secao = null;
+        while(true){
+            if(secao == null){
+                if(busca.getSuperQuesito() != null)busca = busca.getSuperQuesito();
+                else secao = busca.getSecao();
+            }else{
+                if(secao.getSuperSecao() != null)secao = secao.getSuperSecao();
+                else return Objects.equals(secao.getProntuario().getId(), idProntuario);
+            }
+        }
     }
 
 }

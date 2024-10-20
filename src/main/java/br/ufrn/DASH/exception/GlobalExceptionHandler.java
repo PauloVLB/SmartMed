@@ -49,4 +49,34 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(QuesitoNotInProntuarioException.class)
+    public ResponseEntity<Map<String, Object>> handleQuesitoNotInProntuarioException(QuesitoNotInProntuarioException ex){
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("status", HttpStatus.NOT_FOUND.value());
+        errorResponse.put("error", HttpStatus.NOT_FOUND.getReasonPhrase());
+        errorResponse.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(RespostaAndOpcaoIncompatibleException.class)
+    public ResponseEntity<Map<String, Object>> handleRespostaAndOpcaoIncompatibleException(RespostaAndOpcaoIncompatibleException ex){
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("status", HttpStatus.NOT_FOUND.value());
+        errorResponse.put("error", HttpStatus.NOT_FOUND.getReasonPhrase());
+        errorResponse.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(RespostaFullOfOpcaoException.class)
+    public ResponseEntity<Map<String, Object>> handleRespostaFullOfOpcaoException(RespostaFullOfOpcaoException ex){
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("status", HttpStatus.UNPROCESSABLE_ENTITY.value());
+        errorResponse.put("error", HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase());
+        errorResponse.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 }

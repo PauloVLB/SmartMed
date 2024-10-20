@@ -1,9 +1,11 @@
 package br.ufrn.DASH.service;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.model.Usuario;
 import br.ufrn.DASH.repository.UsuarioRepository;
 
@@ -22,15 +24,17 @@ public class UsuarioService {
     }
 
     public Usuario getById(Long id) {
-        return usuarioRepository.findById(id).orElse(null);
+        return usuarioRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(id, new Usuario())
+            );
     }
 
     public Usuario update(Long id, Usuario usuario) {
         Usuario usuarioExistente = this.getById(id);
         
-        if (usuarioExistente == null) {
-            return null;
-        }
+        // if (usuarioExistente == null) {
+        //     return null;
+        // }
         
         usuarioExistente.setLogin(usuario.getLogin());
         usuarioExistente.setSenha(usuario.getSenha());
@@ -41,6 +45,7 @@ public class UsuarioService {
     }
 
     public void delete(Long id) {
+        this.getById(id);
         usuarioRepository.deleteById(id);
     }
 

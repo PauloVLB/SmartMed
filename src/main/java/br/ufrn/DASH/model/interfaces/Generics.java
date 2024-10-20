@@ -4,9 +4,10 @@ import java.util.List;
 
 public class Generics {
     //    default List<Long> quesitosToIds(List<Quesito> quesitos) {
-        public static <T extends GenericEntity> List<Long> TToIds(List<T> input){
-            if(input == null) {
-                return null;
+    public static <T extends GenericEntity> List<Long> TToIds(List<T> input){
+        if(input == null) {
+            // nunca entra aqui (?)
+            return null; 
         }
         return input.stream().map(T::getId).toList();
     }

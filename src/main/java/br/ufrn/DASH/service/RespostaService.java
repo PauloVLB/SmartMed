@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.enums.TipoResposta;
@@ -28,14 +29,16 @@ public class RespostaService {
     }
 
     public Resposta getById(Long id) {
-        return respostaRepository.findById(id).orElse(null);
+        return respostaRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(id, new Resposta())
+            );
     }
 
     public Resposta update(Long id, Resposta resposta) {
         Resposta respostaExistente = this.getById(id);
-        if(respostaExistente == null){
-            return null;
-        }
+        // if(respostaExistente == null){
+        //     return null;
+        // }
         
         respostaExistente.setConteudo(resposta.getConteudo());
         
@@ -43,6 +46,7 @@ public class RespostaService {
     }
 
     public void delete(Long id) {
+        this.getById(id);
         respostaRepository.deleteById(id);
     }
 
@@ -54,12 +58,12 @@ public class RespostaService {
         Resposta resposta = this.getById(idResposta);
         Opcao opcao = opcaoService.getById(idOpcao);
 
-        if(resposta == null){
-            return null;
-        }
-        if(opcao == null){
-            return null;
-        }
+        // if(resposta == null){
+        //     return null;
+        // }
+        // if(opcao == null){
+        //     return null;
+        // }
 
         if(resposta.getQuesito().getTipoResposta() == TipoResposta.OBJETIVA_SIMPLES){
             if(resposta.getOpcoesMarcadas().isEmpty()){

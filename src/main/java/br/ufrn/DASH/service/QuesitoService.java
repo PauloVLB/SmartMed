@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.repository.QuesitoRepository;
@@ -24,15 +25,18 @@ public class QuesitoService {
     }
 
     public Quesito getById(Long id) {
-        return quesitoRepository.findById(id).orElse(null);
+        return quesitoRepository.findById(id)
+        .orElseThrow(
+                () -> new EntityNotFoundException(id, new Quesito())
+            );
     }
 
     public Quesito update(Long id, Quesito quesito) {
         Quesito quesitoExistente = this.getById(id);
         
-        if (quesitoExistente == null) {
-            return null;
-        }
+        // if (quesitoExistente == null) {
+        //     return null;
+        // }
         
         quesitoExistente.setEnunciado(quesito.getEnunciado());
         quesitoExistente.setOrdem(quesito.getOrdem());
@@ -44,6 +48,7 @@ public class QuesitoService {
     }
 
     public void delete(Long id) {
+        this.getById(id);
         quesitoRepository.deleteById(id);
     }
 
@@ -54,9 +59,9 @@ public class QuesitoService {
     public Quesito addSubQuesito(Long idQuesito, Quesito subQuesito) {
         Quesito superQuesito = this.getById(idQuesito);
 
-        if(superQuesito == null){
-            return null;
-        }
+        // if(superQuesito == null){
+        //     return null;
+        // }
         subQuesito.setOrdem(superQuesito.getSubQuesitos().size());
         subQuesito.setNivel(superQuesito.getNivel() + 1);
 
@@ -71,9 +76,9 @@ public class QuesitoService {
     public Opcao addOpcao(Long idQuesito, Opcao opcaoNovo) {
         Quesito quesito = this.getById(idQuesito);
         
-        if (quesito == null) {
-            return null;
-        }
+        // if (quesito == null) {
+        //     return null;
+        // }
         
         opcaoNovo.setOrdem(quesito.getOpcoes().size());
         opcaoNovo.setQuesito(quesito);
@@ -86,9 +91,9 @@ public class QuesitoService {
     public List<Opcao> getOpcoes(Long idQuesito) {
         Quesito quesito = this.getById(idQuesito);
         
-        if (quesito == null) {
-            return null;
-        }
+        // if (quesito == null) {
+        //     return null;
+        // }
         
         return quesito.getOpcoes();
     }
@@ -96,9 +101,9 @@ public class QuesitoService {
     public List<Quesito> getSubQuesitos(Long idQuesito) {
         Quesito quesito = this.getById(idQuesito);
         
-        if (quesito == null) {
-            return null;
-        }
+        // if (quesito == null) {
+        //     return null;
+        // }
         
         return quesito.getSubQuesitos();
     }

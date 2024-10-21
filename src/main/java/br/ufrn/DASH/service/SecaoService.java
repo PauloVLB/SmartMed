@@ -1,9 +1,11 @@
 package br.ufrn.DASH.service;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.repository.SecaoRepository;
@@ -23,15 +25,17 @@ public class SecaoService {
     }
 
     public Secao getById(Long id) {
-        return secaoRepository.findById(id).orElse(null);
+        return secaoRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(id, new Secao())
+            );
     }
 
     public Secao update(Long id, Secao secao) {
         Secao secaoExistente = this.getById(id);
         
-        if (secaoExistente == null) {
-            return null;
-        }
+        // if (secaoExistente == null) {
+        //     return null;
+        // }
         
         secaoExistente.setTitulo(secao.getTitulo());
         secaoExistente.setOrdem(secao.getOrdem());
@@ -41,6 +45,7 @@ public class SecaoService {
     }
 
     public void delete(Long id) {
+        this.getById(id);
         secaoRepository.deleteById(id);
     }
 
@@ -51,9 +56,9 @@ public class SecaoService {
     public Secao addSubSecao(Long idSuperSecao, Secao subSecao) {
         Secao superSecao = this.getById(idSuperSecao);
         
-        if (superSecao == null) {
-            return null;
-        }
+        // if (superSecao == null) {
+        //     return null;
+        // }
         
         subSecao.setOrdem(superSecao.getSubSecoes().size());
         subSecao.setNivel(superSecao.getNivel() + 1);
@@ -68,9 +73,9 @@ public class SecaoService {
     public Quesito addQuesito(Long idSecao, Quesito quesito) {
         Secao secao = this.getById(idSecao);
         
-        if (secao == null) {
-            return null;
-        }
+        // if (secao == null) {
+        //     return null;
+        // }
         
         quesito.setOrdem(secao.getQuesitos().size());
         quesito.setNivel(secao.getNivel() + 1);
@@ -84,9 +89,9 @@ public class SecaoService {
     public List<Quesito> getQuesitos(Long idSecao) {
         Secao secao = this.getById(idSecao);
         
-        if (secao == null) {
-            return null;
-        }
+        // if (secao == null) {
+        //     return null;
+        // }
         
         return secao.getQuesitos();
     }
@@ -94,9 +99,9 @@ public class SecaoService {
     public List<Secao> getSubSecoes(Long idSecao) {
         Secao secao = this.getById(idSecao);
         
-        if (secao == null) {
-            return null;
-        }
+        // if (secao == null) {
+        //     return null;
+        // }
         
         return secao.getSubSecoes();
     }

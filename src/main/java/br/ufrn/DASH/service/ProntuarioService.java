@@ -130,6 +130,7 @@ public class ProntuarioService {
         Prontuario prontuarioTemplate = this.getById(idTemplate);
         if(/*prontuarioTemplate == null ||*/ !prontuarioTemplate.getEhTemplate()) throw new ProntuarioNotTemplateException(idTemplate);
         Prontuario prontuarioCriado = prontuarioTemplate.duplicar(null);
+        prontuarioCriado.setEhTemplate(false);
         return prontuarioRepository.save(prontuarioCriado);
     }
 

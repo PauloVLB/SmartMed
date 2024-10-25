@@ -154,7 +154,11 @@ public class ProntuarioService {
 
     public LLMResponse getDiagnosticoLLM(Long idProntuario) {
         String prompt = 
-        "Com base no seguinte JSON, que corresponde a um prontuário de um paciente, faça um diagnóstico do paciente.\n";
+        "Com base no seguinte JSON, que corresponde a um prontuário de um paciente, faça um diagnóstico do paciente. " + 
+        "Você não precisa se ater a divisão de seções e quesitos, apenas faça um diagnóstico geral do paciente. " +
+        "Seu diagnóstico será avaliado por um médico especialista, que pode ou não concordar com o diagnóstico gerado. " +
+        "Portanto, pode dar sugestões de exames, tratamentos, ou qualquer outra informação que julgar relevante. " +
+        "Pode fingir que o paciente é real, e que você está fazendo um diagnóstico real.\n";
 
         Prontuario prontuario = this.getById(idProntuario);
         prompt += toJson(prontuario);

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.ufrn.DASH.mapper.llm.LLMResponse;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioCreate;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioMapper;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioOutput;
@@ -124,5 +125,12 @@ public class ProntuarioController {
         ProntuarioOutput prontuarioOutput = prontuarioMapper.toProntuarioOutput(prontuarioCriado);
         return new ResponseEntity<ProntuarioOutput>(prontuarioOutput, HttpStatus.CREATED);
     }
+
+    @GetMapping("/{idProntuario}/diagnosticoLLM")
+    public ResponseEntity<LLMResponse> getPath(@PathVariable Long idProntuario) {
+        LLMResponse response = prontuarioService.getDiagnosticoLLM(idProntuario);
+        return new ResponseEntity<LLMResponse>(response, HttpStatus.OK);
+    }
+    
 
 }

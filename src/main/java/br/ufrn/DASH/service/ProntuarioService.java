@@ -10,6 +10,7 @@ import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.exception.ProntuarioNotTemplateException;
 import br.ufrn.DASH.exception.ProntuarioTemplateException;
 import br.ufrn.DASH.exception.QuesitoNotInProntuarioException;
+import br.ufrn.DASH.mapper.llm.LLMResponse;
 import br.ufrn.DASH.model.Prontuario;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Resposta;
@@ -31,6 +32,9 @@ public class ProntuarioService {
 
     @Autowired
     private QuesitoService quesitoService;
+
+    @Autowired
+    private LLMService llmService;
 
     public Prontuario create(Prontuario prontuario) {
         return prontuarioRepository.save(prontuario);
@@ -146,6 +150,45 @@ public class ProntuarioService {
                 else return Objects.equals(secao.getProntuario().getId(), idProntuario);
             }
         }
+    }
+
+    public LLMResponse getDiagnosticoLLM(Long idProntuario) {
+        String prompt = 
+        "Com base no seguinte JSON, que corresponde a um prontuário de um paciente, faça um diagnóstico do paciente.\n";
+
+        Prontuario prontuario = this.getById(idProntuario);
+        prompt += toJson(prontuario);
+
+        return llmService.getRespostaFromPrompt(prompt);
+    }
+
+    private String toJson(Prontuario prontuario) {
+        StringBuilder json = new StringBuilder("{\n");
+
+        json.append("\t\"nome\": \"").append(prontuario.getNome()).append("\",\n");
+        json.append("\t\"descricao\": \"").append(prontuario.getDescricao()).append("\",\n");
+        json.append("\t\"secoes\": [\n");
+
+        for (Secao secao : prontuario.getSecoes()) {
+            json.append("\t\t{\n");
+            json.append("\t\t\t\"nome\": \"").append(secao.getTitulo()).append("\",\n");
+            json.append("\t\t\t\"quesitos\": [\n");
+
+            for (Quesito quesito : secao.getQuesitos()) {
+                json.append("\t\t\t\t{\n");
+                json.append("\t\t\t\t\t\"nome\": \"").append(quesito.getEnunciado()).append("\",\n");
+                json.append("\t\t\t\t\t\"resposta\": \"").append(quesito.getResposta().getConteudo()).append("\"\n");
+                json.append("\t\t\t\t},\n");
+            }
+
+            json.append("\t\t\t]\n");
+            json.append("\t\t},\n");
+        }
+
+        json.append("\t]\n");
+        json.append("}");
+
+        return json.toString();
     }
 
 }

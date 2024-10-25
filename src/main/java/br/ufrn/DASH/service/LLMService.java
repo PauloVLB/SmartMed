@@ -27,7 +27,7 @@ public class LLMService {
 
     public LLMResponse getRespostaFromPrompt(String prompt) {
         LLMMessage message = new LLMMessage("user", prompt);
-        LLMRequest request = new LLMRequest(List.of(message), model, 2);
+        LLMRequest request = new LLMRequest(List.of(message), model, 1);
 
         LLMResponse response = restTemplate.postForObject(apiUrl, request, LLMResponse.class);
 

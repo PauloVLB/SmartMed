@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.ufrn.DASH.exception.EntityNotFoundException;
+import br.ufrn.DASH.exception.OpcaoHabilitadoraAlreadyInQuesitoException;
 import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.repository.QuesitoRepository;
@@ -15,6 +16,9 @@ public class QuesitoService {
 
     @Autowired
     private QuesitoRepository quesitoRepository;
+
+    @Autowired
+    private OpcaoService opcaoService;
 
     public Quesito create(Quesito quesito) {
         return quesitoRepository.save(quesito);
@@ -106,5 +110,19 @@ public class QuesitoService {
         // }
         
         return quesito.getSubQuesitos();
+    }
+
+    public Opcao addOpcaoHabilitadora(Long idQuesito, Long idOpcao) {
+        Quesito quesito = this.getById(idQuesito);
+        Opcao opcao = opcaoService.getById(idOpcao);
+
+        if(quesito.getOpcoesHabilitadoras().contains(opcao)){
+            throw new OpcaoHabilitadoraAlreadyInQuesitoException(idQuesito, idOpcao);
+        }
+
+        quesito.getOpcoesHabilitadoras().add(opcao);
+        quesitoRepository.save(quesito);
+        
+        return opcao;
     }
 }

@@ -18,6 +18,7 @@ import br.ufrn.DASH.mapper.opcao.OpcaoMapper;
 import br.ufrn.DASH.mapper.opcao.OpcaoOutput;
 import br.ufrn.DASH.mapper.opcao.OpcaoUpdate;
 import br.ufrn.DASH.model.Opcao;
+import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.service.OpcaoService;
 
 @RestController
@@ -73,5 +74,11 @@ public class OpcaoController {
     public ResponseEntity<Boolean> deleteAll() {
         opcaoService.deleteAll();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/quesitosHabilitados")
+    public ResponseEntity<List<Quesito>> getQuesitosHabilitados(@PathVariable Long id) {
+        List<Quesito> quesitos = opcaoService.getQuesitosHabilitados(id);
+        return new ResponseEntity<List<Quesito>>(quesitos, HttpStatus.OK);
     }
 }

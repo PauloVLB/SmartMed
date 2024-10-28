@@ -63,4 +63,9 @@ public class OpcaoService {
         }
         opcaoRepository.deleteAll();
     }
+
+    public List<Quesito> getQuesitosHabilitados(Long id) {
+        Opcao opcao = this.getById(id);
+        return opcao.getQuesitosHabilitados();
+    }
 }

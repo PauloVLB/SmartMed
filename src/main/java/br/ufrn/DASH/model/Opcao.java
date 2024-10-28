@@ -34,4 +34,14 @@ public class Opcao implements GenericEntity{
 
         return opcao;
     }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Opcao opcao = (Opcao) o;
+
+        return id.equals(opcao.id);
+    }
 }

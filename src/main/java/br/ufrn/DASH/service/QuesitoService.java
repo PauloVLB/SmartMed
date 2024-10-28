@@ -116,23 +116,26 @@ public class QuesitoService {
 
     public Boolean estaHabilitado(Long id) {
         Quesito quesito = this.getById(id);
-
-        if(quesito.getOpcoesHabilitadoras().isEmpty()){
+        List<Opcao> opcoesHabilitadoras = quesito.getOpcoesHabilitadoras();
+        if(opcoesHabilitadoras.isEmpty()){
             return true;
         }
 
-        List<Resposta> respostas = respostaService.getAll();
+        List<Quesito> quesitosPai = opcoesHabilitadoras.stream()
+            .map(Opcao::getQuesito)
+            .distinct()
+            .toList();
+        
+        List<Resposta> respostas = quesitosPai.stream()
+            .map(Quesito::getResposta)
+            .toList();
 
         for (Resposta resposta : respostas) {
-            if(resposta.getQuesito().getId().equals(id)){
-                if (resposta.getOpcoesMarcadas()
-                    .stream()
-                    .anyMatch(quesito.getOpcoesHabilitadoras()::contains)
-                    ) 
-                {
-                    return true;
-                }
+            List<Opcao> opcoesMarcadas = resposta.getOpcoesMarcadas();
+            if(opcoesHabilitadoras.stream().anyMatch(opcao -> opcoesMarcadas.contains(opcao))){
+                return true;
             }
+            
         }
         return false;
 

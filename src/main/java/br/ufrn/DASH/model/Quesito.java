@@ -11,6 +11,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -44,6 +46,9 @@ public class Quesito implements GenericEntity{
     private List<Opcao> opcoes = new ArrayList<Opcao>();
 
     @ManyToMany
+    @JoinTable(name = "quesito_opcao_habilitadora",
+               joinColumns = @JoinColumn(name = "quesito_id"),
+               inverseJoinColumns = @JoinColumn(name = "opcao_id"))
     private List<Opcao> opcoesHabilitadoras = new ArrayList<Opcao>(); 
 
     @ManyToOne

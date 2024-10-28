@@ -118,4 +118,12 @@ public class QuesitoController {
                 .toList();
         return new ResponseEntity<List<QuesitoOutput>>(subQuesitosOutput, HttpStatus.OK);
     }
+
+    
+    @PostMapping("/{idQuesito}/addOpcaoHabilitadora/{idOpcao}")
+    public ResponseEntity<OpcaoOutput> addOpcaoHabilitadora(@PathVariable Long idQuesito, @PathVariable Long idOpcao) {
+        Opcao opcao = quesitoService.addOpcaoHabilitadora(idQuesito, idOpcao);
+        OpcaoOutput opcaoOutput = opcaoMapper.toOpcaoOutput(opcao);
+        return new ResponseEntity<OpcaoOutput>(opcaoOutput, HttpStatus.OK);
+    }
 }

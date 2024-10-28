@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.model.Opcao;
+import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.repository.OpcaoRepository;
 
 @Service
@@ -14,6 +15,9 @@ public class OpcaoService {
 
     @Autowired
     private OpcaoRepository opcaoRepository;
+
+    @Autowired
+    private QuesitoService quesitoService;
 
     public Opcao create(Opcao opcao) {
         return opcaoRepository.save(opcao);
@@ -44,11 +48,24 @@ public class OpcaoService {
     }
 
     public void delete(Long id) {
-        this.getById(id);
+        Opcao opcaoHabilitadora = this.getById(id);
+        List<Quesito> quesitos = opcaoHabilitadora.getQuesitosHabilitados();
+        for (Quesito quesito : quesitos) {
+            quesito.getOpcoesHabilitadoras().removeIf(opcao -> opcao.getId().equals(id));
+        }
         opcaoRepository.deleteById(id);
     }
 
     public void deleteAll() {
+        List<Quesito> quesitos = quesitoService.getAll();
+        for (Quesito quesito : quesitos) {
+            quesito.getOpcoesHabilitadoras().clear();
+        }
         opcaoRepository.deleteAll();
+    }
+
+    public List<Quesito> getQuesitosHabilitados(Long id) {
+        Opcao opcao = this.getById(id);
+        return opcao.getQuesitosHabilitados();
     }
 }

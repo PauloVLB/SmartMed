@@ -126,4 +126,10 @@ public class QuesitoController {
         OpcaoOutput opcaoOutput = opcaoMapper.toOpcaoOutput(opcao);
         return new ResponseEntity<OpcaoOutput>(opcaoOutput, HttpStatus.OK);
     }
+    
+    @GetMapping("/{idQuesito}/estaHabilitado")
+    public ResponseEntity<Boolean> estaHabilitado(@PathVariable Long idQuesito) {
+        Boolean estaHabilitado = quesitoService.estaHabilitado(idQuesito);
+        return new ResponseEntity<Boolean>(estaHabilitado, HttpStatus.OK);
+    }
 }

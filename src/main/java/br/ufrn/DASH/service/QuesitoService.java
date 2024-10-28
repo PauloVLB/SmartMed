@@ -11,6 +11,7 @@ import br.ufrn.DASH.exception.OpcaoHabilitadoraAlreadyInQuesitoException;
 import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Secao;
+import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.repository.QuesitoRepository;
 
 @Service
@@ -25,6 +26,10 @@ public class QuesitoService {
 
     @Autowired
     private SecaoService secaoService;
+
+    @Autowired
+    @Lazy
+    private RespostaService respostaService;
 
     public Quesito create(Quesito quesito) {
         return quesitoRepository.save(quesito);
@@ -162,5 +167,32 @@ public class QuesitoService {
         quesitoRepository.save(quesito);
         
         return opcao;
+    }
+    
+    public Boolean estaHabilitado(Long id) {
+        Quesito quesito = this.getById(id);
+        List<Opcao> opcoesHabilitadoras = quesito.getOpcoesHabilitadoras();
+        if(opcoesHabilitadoras.isEmpty()){
+            return true;
+        }
+
+        List<Quesito> quesitosPai = opcoesHabilitadoras.stream()
+            .map(Opcao::getQuesito)
+            .distinct()
+            .toList();
+        
+        List<Resposta> respostas = quesitosPai.stream()
+            .map(Quesito::getResposta)
+            .toList();
+
+        for (Resposta resposta : respostas) {
+            List<Opcao> opcoesMarcadas = resposta.getOpcoesMarcadas();
+            if(opcoesHabilitadoras.stream().anyMatch(opcao -> opcoesMarcadas.contains(opcao))){
+                return true;
+            }
+            
+        }
+        return false;
+
     }
 }

@@ -3,11 +3,13 @@ package br.ufrn.DASH.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Quesito;
+import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.repository.QuesitoRepository;
 
 @Service
@@ -15,6 +17,10 @@ public class QuesitoService {
 
     @Autowired
     private QuesitoRepository quesitoRepository;
+
+    @Autowired
+    @Lazy
+    private RespostaService respostaService;
 
     public Quesito create(Quesito quesito) {
         return quesitoRepository.save(quesito);
@@ -106,5 +112,29 @@ public class QuesitoService {
         // }
         
         return quesito.getSubQuesitos();
+    }
+
+    public Boolean estaHabilitado(Long id) {
+        Quesito quesito = this.getById(id);
+
+        if(quesito.getOpcoesHabilitadoras().isEmpty()){
+            return true;
+        }
+
+        List<Resposta> respostas = respostaService.getAll();
+
+        for (Resposta resposta : respostas) {
+            if(resposta.getQuesito().getId().equals(id)){
+                if (resposta.getOpcoesMarcadas()
+                    .stream()
+                    .anyMatch(quesito.getOpcoesHabilitadoras()::contains)
+                    ) 
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+
     }
 }

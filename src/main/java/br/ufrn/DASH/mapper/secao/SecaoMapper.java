@@ -7,11 +7,15 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.Named;
 
+import br.ufrn.DASH.mapper.quesito.QuesitoMapper;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Secao;
 import static br.ufrn.DASH.model.interfaces.Generics.TToIds;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING,
+    uses = {QuesitoMapper.class}    
+)
 public interface SecaoMapper {
 
     @Mapping(target = "titulo")
@@ -43,6 +47,16 @@ public interface SecaoMapper {
     @Mapping(target = "prontuarioId", source = "prontuario.id")
     @Mapping(target = "quesitosIds", source = "quesitos", qualifiedByName = "quesitosToIds")
     SecaoOutput toSecaoOutput(Secao secao);
+
+    @Mapping(target = "id")
+    @Mapping(target = "titulo")
+    @Mapping(target = "ordem")
+    @Mapping(target = "nivel")
+    @Mapping(target = "subSecoes", source = "subSecoes")
+    @Mapping(target = "superSecaoId", source = "superSecao.id")
+    @Mapping(target = "prontuarioId", source = "prontuario.id")
+    @Mapping(target = "quesitos", source = "quesitos")
+    SecaoCompleteOutput toSecaoCompleteOutput(Secao secao);
 
     @Named("secoesToIds")
     default List<Long> secoesToIds(List<Secao> secoes) {

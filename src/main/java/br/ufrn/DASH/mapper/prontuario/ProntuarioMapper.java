@@ -1,17 +1,16 @@
 package br.ufrn.DASH.mapper.prontuario;
 
-import java.util.List;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import org.mapstruct.Named;
 
+import br.ufrn.DASH.mapper.secao.SecaoMapper;
 import br.ufrn.DASH.model.Prontuario;
-import br.ufrn.DASH.model.Secao;
-import static br.ufrn.DASH.model.interfaces.Generics.TToIds;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING,
+    uses = {SecaoMapper.class}
+)
 public interface ProntuarioMapper {
 
     @Mapping(target = "nome")
@@ -48,10 +47,15 @@ public interface ProntuarioMapper {
     @Mapping(target = "usuarioId", source = "usuario.id")
     @Mapping(target = "secoesIds", source = "secoes", qualifiedByName = "secoesToIds")
     ProntuarioOutput toProntuarioOutput(Prontuario prontuario);
-    
-    @Named("secoesToIds")
-    default List<Long> secoesToIds(List<Secao> secoes) {
-        return TToIds(secoes);
-    }
+
+    @Mapping(target = "nome")
+    @Mapping(target = "descricao")
+    @Mapping(target = "ehPublico")
+    @Mapping(target = "ehTemplate")
+    @Mapping(target = "finalizado")
+    @Mapping(target = "id")
+    @Mapping(target = "usuarioId", source = "usuario.id")
+    @Mapping(target = "secoes", source = "secoes")
+    ProntuarioCompleteOutput toProntuarioCompleteOutput(Prontuario prontuario);
     
 }

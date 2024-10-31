@@ -7,11 +7,15 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.Named;
 
-import br.ufrn.DASH.model.Opcao;
+import br.ufrn.DASH.mapper.opcao.OpcaoMapper;
+import br.ufrn.DASH.mapper.resposta.RespostaMapper;
 import br.ufrn.DASH.model.Quesito;
 import static br.ufrn.DASH.model.interfaces.Generics.TToIds;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING,
+    uses = {OpcaoMapper.class, RespostaMapper.class}
+)
 public interface QuesitoMapper {
 
     @Mapping(target = "enunciado")
@@ -56,10 +60,19 @@ public interface QuesitoMapper {
     @Mapping(target = "opcoesIds", source = "opcoes", qualifiedByName = "opcoesToIds")
     QuesitoOutput toQuesitoOutput(Quesito quesito);
 
-    @Named("opcoesToIds")
-    default List<Long> opcoesToIds(List<Opcao> opcoes) {
-        return TToIds(opcoes);
-    }
+    @Mapping(target = "id")
+    @Mapping(target = "enunciado")
+    @Mapping(target = "obrigatorio")
+    @Mapping(target = "ordem")
+    @Mapping(target = "nivel")
+    @Mapping(target = "tipoResposta")
+    @Mapping(target = "superQuesitoId", source = "superQuesito.id")
+    @Mapping(target = "secaoId", source = "secao.id")
+    @Mapping(target = "resposta", source = "resposta")
+    @Mapping(target = "opcoesHabilitadorasIds", source = "opcoesHabilitadoras", qualifiedByName = "opcoesToIds")
+    @Mapping(target = "subQuesitos", source = "subQuesitos")
+    @Mapping(target = "opcoes", source = "opcoes")
+    QuesitoCompleteOutput toQuesitoCompleteOutput(Quesito quesito);
 
     @Named("subQuesitosToIds")
     default List<Long> subQuesitosToIds(List<Quesito> opcoes) {

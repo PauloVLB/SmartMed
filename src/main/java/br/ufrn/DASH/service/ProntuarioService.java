@@ -3,6 +3,8 @@ package br.ufrn.DASH.service;
 import java.util.List;
 import java.util.Objects;
 
+import java.util.Map;
+import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -152,18 +154,25 @@ public class ProntuarioService {
         }
     }
 
-    public LLMResponse getDiagnosticoLLM(Long idProntuario) {
+    public Map<String, String> getDiagnosticoLLM(Long idProntuario) {
         String prompt = 
         "Com base no seguinte JSON, que corresponde a um prontuário de um paciente, faça um diagnóstico do paciente. " + 
         "Você não precisa se ater a divisão de seções e quesitos, apenas faça um diagnóstico geral do paciente. " +
         "Seu diagnóstico será avaliado por um médico especialista, que pode ou não concordar com o diagnóstico gerado. " +
         "Portanto, pode dar sugestões de exames, tratamentos, ou qualquer outra informação que julgar relevante. " +
-        "Pode fingir que o paciente é real, e que você está fazendo um diagnóstico real.\n";
+        "Pode assumir que o paciente é real, e que você está fazendo um diagnóstico real.\n";
 
         Prontuario prontuario = this.getById(idProntuario);
         prompt += toJson(prontuario);
 
-        return llmService.getRespostaFromPrompt(prompt);
+        Map<String, String> respostas = new HashMap<>();
+        LLMResponse response = llmService.getRespostaFromPrompt(prompt);
+        respostas.put("content", response.choices().get(0).message().content());
+
+        prontuario.setDiagnosticoLLM(respostas.get("content"));
+        this.update(idProntuario, prontuario);
+        
+        return respostas;
     }
 
     private String toJson(Prontuario prontuario) {

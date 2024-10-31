@@ -22,6 +22,8 @@ public interface ProntuarioMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "secoes", ignore = true)
     @Mapping(target = "usuario", ignore = true)
+    @Mapping(target = "diagnosticoLLM", ignore = true)
+    @Mapping(target = "duplicar", ignore = true)
     Prontuario toProntuarioFromCreate(ProntuarioCreate prontuarioCreate);
 
 
@@ -33,6 +35,8 @@ public interface ProntuarioMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "secoes", ignore = true)
     @Mapping(target = "usuario", ignore = true)
+    @Mapping(target = "diagnosticoLLM", ignore = true)
+    @Mapping(target = "duplicar", ignore = true)
     Prontuario toProntuarioFromUpdate(ProntuarioUpdate prontuarioUpdate);
 
     @Mapping(target = "nome")

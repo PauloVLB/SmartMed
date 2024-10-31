@@ -26,6 +26,7 @@ public interface SecaoMapper {
     @Mapping(target = "prontuario", ignore = true)
     @Mapping(target = "quesitos", ignore = true)
     @Mapping(target = "superSecao", ignore = true)
+    @Mapping(target = "subItens", ignore = true)
     Secao toSecaoFromCreate(SecaoCreate secaoCreate);
 
     @Mapping(target = "titulo")
@@ -36,6 +37,7 @@ public interface SecaoMapper {
     @Mapping(target = "prontuario", ignore = true)
     @Mapping(target = "quesitos", ignore = true)
     @Mapping(target = "superSecao", ignore = true)
+    @Mapping(target = "subItens", ignore = true)
     Secao toSecaoFromUpdate(SecaoUpdate secaoUpdate);
 
     @Mapping(target = "id")

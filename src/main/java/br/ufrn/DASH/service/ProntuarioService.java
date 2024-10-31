@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,13 +54,21 @@ public class ProntuarioService {
             );
     }
 
+    public Prontuario getById(Long id, boolean incluirDesabilitados) {
+        Prontuario prontuario = this.getById(id);
+
+        if(incluirDesabilitados) {
+           return prontuario;
+        } else {
+            Prontuario prontuarioSemDesabilitados = prontuario;
+            
+            return prontuarioSemDesabilitados;
+        }
+    }
+
     public Prontuario update(Long id, Prontuario prontuario) {
         
         Prontuario prontuarioExistente = this.getById(id);
-        
-        // if (prontuarioExistente == null) {
-        //     throw new EntityNotFoundException(id, new Prontuario());
-        // }
         
         prontuarioExistente.setNome(prontuario.getNome());
         prontuarioExistente.setDescricao(prontuario.getDescricao());
@@ -81,10 +90,6 @@ public class ProntuarioService {
     public Secao addSecao(Long idProntuario, Secao secaoNova) {
         Prontuario prontuario = this.getById(idProntuario);
         
-        // if (prontuario == null) {
-        //     throw new EntityNotFoundException(id, new Prontuario());
-        // }
-        
         secaoNova.setOrdem(prontuario.getSecoes().size());
         secaoNova.setNivel(1);
         secaoNova.setProntuario(prontuario);
@@ -99,14 +104,7 @@ public class ProntuarioService {
     public Prontuario duplicar(Long idProntuario, Long idUsuario) {
         Prontuario prontuarioToDuplicate = this.getById(idProntuario);
 
-        // if(prontuarioToDuplicate == null) {
-        //     return null;
-        // }
-
         Usuario novoUsuario = usuarioService.getById(idUsuario);
-        // if(novoUsuario == null) {
-        //     return null;
-        // }
 
         Prontuario prontuarioDuplicado = prontuarioToDuplicate.duplicar(novoUsuario);
         return prontuarioRepository.save(prontuarioDuplicado);
@@ -134,7 +132,7 @@ public class ProntuarioService {
 
     public Prontuario addProntuarioFromTemplate(Long idTemplate) {
         Prontuario prontuarioTemplate = this.getById(idTemplate);
-        if(/*prontuarioTemplate == null ||*/ !prontuarioTemplate.getEhTemplate()) throw new ProntuarioNotTemplateException(idTemplate);
+        if(!prontuarioTemplate.getEhTemplate()) throw new ProntuarioNotTemplateException(idTemplate);
         Prontuario prontuarioCriado = prontuarioTemplate.duplicar(null);
         prontuarioCriado.setEhTemplate(false);
         return prontuarioRepository.save(prontuarioCriado);

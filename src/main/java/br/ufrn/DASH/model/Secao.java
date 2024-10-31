@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 import br.ufrn.DASH.model.interfaces.GenericEntity;
+import br.ufrn.DASH.model.interfaces.ItemOrdenavel;
+import br.ufrn.DASH.model.interfaces.ItemOrdenavelUtils;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,7 +23,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Secao implements GenericEntity{
+public class Secao implements GenericEntity, ItemOrdenavel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,6 +43,14 @@ public class Secao implements GenericEntity{
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Quesito> quesitos = new ArrayList<Quesito>();
+
+    public List<ItemOrdenavel> getSubItens() {
+        List<ItemOrdenavel> subItens = new ArrayList<ItemOrdenavel>();
+        subItens.addAll(this.subSecoes);
+        subItens.addAll(this.quesitos);
+        ItemOrdenavelUtils.ordenar(subItens);
+        return subItens;
+    }
 
     public Secao duplicar() {
         Secao secao = new Secao();

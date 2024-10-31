@@ -64,8 +64,11 @@ public class ProntuarioController {
     }
 
     @GetMapping("/{id}/complete")
-    public ResponseEntity<ProntuarioCompleteOutput> getByIdComplete(@PathVariable Long id) {
-        Prontuario prontuario = prontuarioService.getById(id);
+    public ResponseEntity<ProntuarioCompleteOutput> getByIdComplete(
+        @PathVariable Long id, 
+        @RequestParam(defaultValue = "true") boolean incluirDesabilitados
+    ) {
+        Prontuario prontuario = prontuarioService.getById(id, incluirDesabilitados);
         ProntuarioCompleteOutput prontuarioOutput = prontuarioMapper.toProntuarioCompleteOutput(prontuario);
         return new ResponseEntity<ProntuarioCompleteOutput>(prontuarioOutput, HttpStatus.OK);
     }

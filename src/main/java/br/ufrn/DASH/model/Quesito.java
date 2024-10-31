@@ -2,10 +2,13 @@ package br.ufrn.DASH.model;
 
 
 import java.util.List;
+
 import java.util.ArrayList;
 
 import br.ufrn.DASH.model.enums.TipoResposta;
 import br.ufrn.DASH.model.interfaces.GenericEntity;
+import br.ufrn.DASH.model.interfaces.ItemOrdenavel;
+import br.ufrn.DASH.model.interfaces.ItemOrdenavelUtils;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,7 +30,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Quesito implements GenericEntity{
+public class Quesito implements GenericEntity, ItemOrdenavel {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,6 +62,13 @@ public class Quesito implements GenericEntity{
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Quesito> subQuesitos = new ArrayList<Quesito>();
+
+    public List<ItemOrdenavel> getSubItens() {
+        List<ItemOrdenavel> subItens = new ArrayList<ItemOrdenavel>();
+        subItens.addAll(this.subQuesitos);
+        ItemOrdenavelUtils.ordenar(subItens);
+        return subItens;
+    }
 
     public Quesito duplicar() {
         Quesito quesito = new Quesito();

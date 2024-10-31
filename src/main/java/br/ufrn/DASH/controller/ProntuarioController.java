@@ -1,6 +1,7 @@
 package br.ufrn.DASH.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -124,5 +125,12 @@ public class ProntuarioController {
         ProntuarioOutput prontuarioOutput = prontuarioMapper.toProntuarioOutput(prontuarioCriado);
         return new ResponseEntity<ProntuarioOutput>(prontuarioOutput, HttpStatus.CREATED);
     }
+
+    @GetMapping("/{idProntuario}/diagnosticoLLM")
+    public ResponseEntity<Map<String, String>> getPath(@PathVariable Long idProntuario) {
+        Map<String, String> response = prontuarioService.getDiagnosticoLLM(idProntuario);
+        return new ResponseEntity<Map<String, String>>(response, HttpStatus.OK);
+    }
+    
 
 }

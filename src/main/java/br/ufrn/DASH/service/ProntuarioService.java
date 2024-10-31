@@ -3,6 +3,8 @@ package br.ufrn.DASH.service;
 import java.util.List;
 import java.util.Objects;
 
+import java.util.Map;
+import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,7 @@ import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.exception.ProntuarioNotTemplateException;
 import br.ufrn.DASH.exception.ProntuarioTemplateException;
 import br.ufrn.DASH.exception.QuesitoNotInProntuarioException;
+import br.ufrn.DASH.mapper.llm.LLMResponse;
 import br.ufrn.DASH.model.Prontuario;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Resposta;
@@ -31,6 +34,9 @@ public class ProntuarioService {
 
     @Autowired
     private QuesitoService quesitoService;
+
+    @Autowired
+    private LLMService llmService;
 
     public Prontuario create(Prontuario prontuario) {
         return prontuarioRepository.save(prontuario);
@@ -146,6 +152,56 @@ public class ProntuarioService {
                 else return Objects.equals(secao.getProntuario().getId(), idProntuario);
             }
         }
+    }
+
+    public Map<String, String> getDiagnosticoLLM(Long idProntuario) {
+        String prompt = 
+        "Com base no seguinte JSON, que corresponde a um prontuário de um paciente, faça um diagnóstico do paciente. " + 
+        "Você não precisa se ater a divisão de seções e quesitos, apenas faça um diagnóstico geral do paciente. " +
+        "Seu diagnóstico será avaliado por um médico especialista, que pode ou não concordar com o diagnóstico gerado. " +
+        "Portanto, pode dar sugestões de exames, tratamentos, ou qualquer outra informação que julgar relevante. " +
+        "Pode assumir que o paciente é real, e que você está fazendo um diagnóstico real.\n";
+
+        Prontuario prontuario = this.getById(idProntuario);
+        prompt += toJson(prontuario);
+
+        Map<String, String> respostas = new HashMap<>();
+        LLMResponse response = llmService.getRespostaFromPrompt(prompt);
+        respostas.put("content", response.choices().get(0).message().content());
+
+        prontuario.setDiagnosticoLLM(respostas.get("content"));
+        this.update(idProntuario, prontuario);
+        
+        return respostas;
+    }
+
+    private String toJson(Prontuario prontuario) {
+        StringBuilder json = new StringBuilder("{\n");
+
+        json.append("\t\"nome\": \"").append(prontuario.getNome()).append("\",\n");
+        json.append("\t\"descricao\": \"").append(prontuario.getDescricao()).append("\",\n");
+        json.append("\t\"secoes\": [\n");
+
+        for (Secao secao : prontuario.getSecoes()) {
+            json.append("\t\t{\n");
+            json.append("\t\t\t\"nome\": \"").append(secao.getTitulo()).append("\",\n");
+            json.append("\t\t\t\"quesitos\": [\n");
+
+            for (Quesito quesito : secao.getQuesitos()) {
+                json.append("\t\t\t\t{\n");
+                json.append("\t\t\t\t\t\"nome\": \"").append(quesito.getEnunciado()).append("\",\n");
+                json.append("\t\t\t\t\t\"resposta\": \"").append(quesito.getResposta().getConteudo()).append("\"\n");
+                json.append("\t\t\t\t},\n");
+            }
+
+            json.append("\t\t\t]\n");
+            json.append("\t\t},\n");
+        }
+
+        json.append("\t]\n");
+        json.append("}");
+
+        return json.toString();
     }
 
 }

@@ -4,5 +4,6 @@ import java.util.List;
 
 public record LLMRequest(
     List<LLMMessage> messages,
-    String model
+    String model,
+    int temperature
 ) {}

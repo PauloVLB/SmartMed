@@ -61,9 +61,35 @@ public class ProntuarioService {
            return prontuario;
         } else {
             Prontuario prontuarioSemDesabilitados = prontuario;
-            
+            List<Secao> secoesSemDesabilitados = retirarDesabilitadosSecoes(prontuario.getSecoes());
+            prontuarioSemDesabilitados.setSecoes(secoesSemDesabilitados);
             return prontuarioSemDesabilitados;
         }
+    }
+
+    private List<Secao> retirarDesabilitadosSecoes(List<Secao> secoes) {
+        List<Secao> secoesSemDesabilitados = new ArrayList<>();
+        
+        for(Secao secao : secoes) {
+            secao.setSubSecoes(retirarDesabilitadosSecoes(secao.getSubSecoes()));
+            secao.setQuesitos(retirarDesabilitadosQuesitos(secao.getQuesitos()));
+            secoesSemDesabilitados.add(secao);
+        }
+
+        return secoesSemDesabilitados;
+    }
+
+    private List<Quesito> retirarDesabilitadosQuesitos(List<Quesito> quesitos) {
+        List<Quesito> quesitosSemDesabilitados = new ArrayList<>();
+
+        for(Quesito quesito : quesitos) {
+            if(quesitoService.estaHabilitado(quesito)) {
+                quesitosSemDesabilitados.add(quesito);
+            }
+            quesito.setSubQuesitos(retirarDesabilitadosQuesitos(quesito.getSubQuesitos()));
+        }
+
+        return quesitosSemDesabilitados;
     }
 
     public Prontuario update(Long id, Prontuario prontuario) {

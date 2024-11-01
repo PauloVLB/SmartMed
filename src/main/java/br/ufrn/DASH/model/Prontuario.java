@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.ufrn.DASH.model.interfaces.GenericEntity;
+import br.ufrn.DASH.model.interfaces.ItemOrdenavelUtils;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,6 +42,11 @@ public class Prontuario implements GenericEntity{
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "prontuario")
     private List<Secao> secoes = new ArrayList<Secao>();
+
+    public List<Secao> getSecoes() {
+        ItemOrdenavelUtils.ordenar(secoes);
+        return secoes;
+    }
 
     public Prontuario duplicar(Usuario novoUsuario) {
         Prontuario prontuario = new Prontuario();

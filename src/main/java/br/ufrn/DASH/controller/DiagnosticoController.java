@@ -14,10 +14,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.ufrn.DASH.mapper.diagnostico.DiagnosticoCreate;
 import br.ufrn.DASH.mapper.diagnostico.DiagnosticoMapper;
 import br.ufrn.DASH.mapper.diagnostico.DiagnosticoOutput;
 import br.ufrn.DASH.mapper.diagnostico.DiagnosticoUpdate;
+import br.ufrn.DASH.mapper.opcao.OpcaoCreate;
+import br.ufrn.DASH.mapper.opcao.OpcaoMapper;
+import br.ufrn.DASH.mapper.opcao.OpcaoOutput;
 import br.ufrn.DASH.model.Diagnostico;
+import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.service.DiagnosticoService;
 
 @RestController
@@ -29,13 +34,16 @@ public class DiagnosticoController {
     @Autowired
     private DiagnosticoMapper diagnosticoMapper;
 
-    // @PostMapping
-    // public ResponseEntity<DiagnosticoOutput> create(@RequestBody DiagnosticoCreate diagnosticoCreate) {
-    //     Diagnostico diagnostico = diagnosticoMapper.toDiagnosticoFromCreate(diagnosticoCreate);
-    //     Diagnostico diagnosticoCriado = diagnosticoService.create(diagnostico);
-    //     DiagnosticoOutput diagnosticoOutput = diagnosticoMapper.toDiagnosticoOutput(diagnosticoCriado);
-    //     return new ResponseEntity<DiagnosticoOutput>(diagnosticoOutput, HttpStatus.CREATED);
-    // }
+    @Autowired
+    private OpcaoMapper opcaoMapper;
+
+    @PostMapping
+    public ResponseEntity<DiagnosticoOutput> create(@RequestBody DiagnosticoCreate diagnosticoCreate) {
+        Diagnostico diagnostico = diagnosticoMapper.toDiagnosticoFromCreate(diagnosticoCreate);
+        Diagnostico diagnosticoCriado = diagnosticoService.create(diagnostico);
+        DiagnosticoOutput diagnosticoOutput = diagnosticoMapper.toDiagnosticoOutput(diagnosticoCriado);
+        return new ResponseEntity<DiagnosticoOutput>(diagnosticoOutput, HttpStatus.CREATED);
+    }
 
 
     @GetMapping("/{id}")
@@ -73,6 +81,21 @@ public class DiagnosticoController {
     public ResponseEntity<Boolean> deleteAll() {
         diagnosticoService.deleteAll();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PostMapping("/{idDiagnostico}/opcao/{idOpcao}/addOpcao")
+    public ResponseEntity<OpcaoOutput> addOpcao(@PathVariable Long idDiagnostico, @PathVariable Long idOpcao) {
+        Opcao opcaoCriado = diagnosticoService.addOpcao(idDiagnostico, idOpcao);
+        OpcaoOutput opcaoOutput = opcaoMapper.toOpcaoOutput(opcaoCriado);
+        return new ResponseEntity<OpcaoOutput>(opcaoOutput, HttpStatus.OK);
+    }
+
+    @PostMapping("/{idDiagnostico}/opcao/{idOpcao}/removeOpcao")
+    public ResponseEntity<OpcaoOutput> removeOpcao(@PathVariable Long idDiagnostico, @PathVariable Long idOpcao) {
+        // removeOpcao é void ou retorna uma opção?
+        Opcao opcaoCriado = diagnosticoService.removeOpcao(idDiagnostico, idOpcao);
+        OpcaoOutput opcaoOutput = opcaoMapper.toOpcaoOutput(opcaoCriado);
+        return new ResponseEntity<OpcaoOutput>(opcaoOutput, HttpStatus.OK);
     }
 
 }

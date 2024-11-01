@@ -73,6 +73,7 @@ public class RespostaService {
         if(resposta.getQuesito().getTipoResposta() == TipoResposta.OBJETIVA_SIMPLES && resposta.getOpcoesMarcadas().isEmpty()){
             resposta.getOpcoesMarcadas().add(opcao);
         } else if(resposta.getQuesito().getTipoResposta() == TipoResposta.OBJETIVA_MULTIPLA){
+            // TODO: exceção para quando marcar a mesma opção várias vezes
             resposta.getOpcoesMarcadas().add(opcao);
         } else{
             throw new RespostaFullOfOpcaoException(idResposta);

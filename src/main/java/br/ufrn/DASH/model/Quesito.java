@@ -102,4 +102,14 @@ public class Quesito implements GenericEntity, Item {
 
         return quesito;
     }
+
+    public Prontuario getProntuario() {
+        if(this.secao != null) {
+            return this.secao.getProntuario();
+        } else if(this.superQuesito != null) {
+            return this.superQuesito.getProntuario();
+        } else {
+            return null;
+        }
+    }
 }

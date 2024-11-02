@@ -1,7 +1,6 @@
 package br.ufrn.DASH.service;
 
 import java.util.List;
-import java.util.Objects;
 
 import java.util.Map;
 import java.util.ArrayList;
@@ -137,9 +136,16 @@ public class ProntuarioService {
     }
     
     public Resposta addResposta(Long idProntuario, Long idQuesito, Resposta respostaNova) {
-        if(this.getById(idProntuario).getEhTemplate())throw new ProntuarioTemplateException(idProntuario);
+        Prontuario prontuario = this.getById(idProntuario);
+        if(prontuario.getEhTemplate()) {
+            throw new ProntuarioTemplateException(idProntuario);
+        }
         Quesito quesito = quesitoService.getById(idQuesito);
-        if(!relacionadas(idProntuario, quesito))throw new QuesitoNotInProntuarioException(idProntuario, idQuesito);
+        
+        Prontuario prontuarioDoQuesito = quesito.getProntuario();
+        if(prontuarioDoQuesito == null || !prontuarioDoQuesito.getId().equals(idProntuario)) {
+            throw new QuesitoNotInProntuarioException(idProntuario, idQuesito);
+        }
         Resposta respostaCriada;
         if(quesito.getResposta() == null){
             respostaCriada = respostaService.create(respostaNova);
@@ -162,20 +168,6 @@ public class ProntuarioService {
         Prontuario prontuarioCriado = prontuarioTemplate.duplicar(null);
         prontuarioCriado.setEhTemplate(false);
         return prontuarioRepository.save(prontuarioCriado);
-    }
-
-    private boolean relacionadas(Long idProntuario, Quesito quesito){
-        Quesito busca = quesito;
-        Secao secao = null;
-        while(true){
-            if(secao == null){
-                if(busca.getSuperQuesito() != null)busca = busca.getSuperQuesito();
-                else secao = busca.getSecao();
-            }else{
-                if(secao.getSuperSecao() != null)secao = secao.getSuperSecao();
-                else return Objects.equals(secao.getProntuario().getId(), idProntuario);
-            }
-        }
     }
 
     public Map<String, String> getDiagnosticoLLM(Long idProntuario) {

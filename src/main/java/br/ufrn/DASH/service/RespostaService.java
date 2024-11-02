@@ -38,9 +38,6 @@ public class RespostaService {
 
     public Resposta update(Long id, Resposta resposta) {
         Resposta respostaExistente = this.getById(id);
-        // if(respostaExistente == null){
-        //     return null;
-        // }
         
         respostaExistente.setConteudo(resposta.getConteudo());
         
@@ -60,13 +57,6 @@ public class RespostaService {
         Resposta resposta = this.getById(idResposta);
         Opcao opcao = opcaoService.getById(idOpcao);
 
-        // if(resposta == null){
-        //     return null;
-        // }
-        // if(opcao == null){
-        //     return null;
-        // }
-
         if(resposta.getQuesito() != opcao.getQuesito()){
             throw new RespostaAndOpcaoIncompatibleException(idResposta, idOpcao);
         }
@@ -81,7 +71,22 @@ public class RespostaService {
         respostaRepository.save(resposta);
 
         return resposta.getOpcoesMarcadas().get(resposta.getOpcoesMarcadas().size() - 1);
+    }
 
+    public List<Opcao> setOpcoesMarcadas(Long idResposta, List<Long> idsOpcoes) {
+        Resposta resposta = this.getById(idResposta);
+        List<Opcao> opcoes = opcaoService.getAllByIds(idsOpcoes);
+
+        if(resposta.getQuesito().getTipoResposta() != TipoResposta.OBJETIVA_SIMPLES && 
+            resposta.getQuesito().getTipoResposta() != TipoResposta.OBJETIVA_MULTIPLA){
+            throw new RespostaFullOfOpcaoException(idResposta);
+        } 
+
+        resposta.setOpcoesMarcadas(opcoes);
+
+        respostaRepository.save(resposta);
+
+        return resposta.getOpcoesMarcadas();
     }
 
 }

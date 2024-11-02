@@ -72,4 +72,14 @@ public class Secao implements GenericEntity, Item {
 
         return secao;
     }
+
+    public Prontuario geProntuario() {
+        if (this.prontuario != null) {
+            return this.prontuario;
+        } else if (this.superSecao != null) {
+            return this.superSecao.geProntuario();
+        } else {
+            return null;
+        }
+    }
 }

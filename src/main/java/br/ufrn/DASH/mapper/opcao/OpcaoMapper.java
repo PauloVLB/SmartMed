@@ -39,6 +39,14 @@ public interface OpcaoMapper {
     @Mapping(target = "quesitosHabilitadosIds", source = "quesitosHabilitados", qualifiedByName = "quesitosToIds")
     OpcaoOutput toOpcaoOutput(Opcao opcao);
 
+
+    @Mapping(target = "id")
+    @Mapping(target = "textoAlternativa")
+    @Mapping(target = "ordem")
+    @Mapping(target = "quesitoId", source = "quesito.id")
+    @Mapping(target = "quesitosHabilitadosIds", source = "quesitosHabilitados", qualifiedByName = "quesitosToIds")
+    OpcaoCompleteOutput toOpcaoCompleteOutput(Opcao opcao);
+
     @Named("quesitosToIds")
     default List<Long> quesitosToIds(List<Quesito> quesitos) {
         return TToIds(quesitos);

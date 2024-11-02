@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,13 +61,47 @@ public class ProntuarioService {
             );
     }
 
+    public Prontuario getById(Long id, boolean incluirDesabilitados) {
+        Prontuario prontuario = this.getById(id);
+
+        if(incluirDesabilitados) {
+           return prontuario;
+        } else {
+            Prontuario prontuarioSemDesabilitados = prontuario;
+            List<Secao> secoesSemDesabilitados = retirarDesabilitadosSecoes(prontuario.getSecoes());
+            prontuarioSemDesabilitados.setSecoes(secoesSemDesabilitados);
+            return prontuarioSemDesabilitados;
+        }
+    }
+
+    private List<Secao> retirarDesabilitadosSecoes(List<Secao> secoes) {
+        List<Secao> secoesSemDesabilitados = new ArrayList<>();
+        
+        for(Secao secao : secoes) {
+            secao.setSubSecoes(retirarDesabilitadosSecoes(secao.getSubSecoes()));
+            secao.setQuesitos(retirarDesabilitadosQuesitos(secao.getQuesitos()));
+            secoesSemDesabilitados.add(secao);
+        }
+
+        return secoesSemDesabilitados;
+    }
+
+    private List<Quesito> retirarDesabilitadosQuesitos(List<Quesito> quesitos) {
+        List<Quesito> quesitosSemDesabilitados = new ArrayList<>();
+
+        for(Quesito quesito : quesitos) {
+            if(quesitoService.estaHabilitado(quesito)) {
+                quesitosSemDesabilitados.add(quesito);
+            }
+            quesito.setSubQuesitos(retirarDesabilitadosQuesitos(quesito.getSubQuesitos()));
+        }
+
+        return quesitosSemDesabilitados;
+    }
+
     public Prontuario update(Long id, Prontuario prontuario) {
         
         Prontuario prontuarioExistente = this.getById(id);
-        
-        // if (prontuarioExistente == null) {
-        //     throw new EntityNotFoundException(id, new Prontuario());
-        // }
         
         prontuarioExistente.setNome(prontuario.getNome());
         prontuarioExistente.setDescricao(prontuario.getDescricao());
@@ -86,10 +123,6 @@ public class ProntuarioService {
     public Secao addSecao(Long idProntuario, Secao secaoNova) {
         Prontuario prontuario = this.getById(idProntuario);
         
-        // if (prontuario == null) {
-        //     throw new EntityNotFoundException(id, new Prontuario());
-        // }
-        
         secaoNova.setOrdem(prontuario.getSecoes().size());
         secaoNova.setNivel(1);
         secaoNova.setProntuario(prontuario);
@@ -104,29 +137,31 @@ public class ProntuarioService {
     public Prontuario duplicar(Long idProntuario, Long idUsuario) {
         Prontuario prontuarioToDuplicate = this.getById(idProntuario);
 
-        // if(prontuarioToDuplicate == null) {
-        //     return null;
-        // }
-
         Usuario novoUsuario = usuarioService.getById(idUsuario);
-        // if(novoUsuario == null) {
-        //     return null;
-        // }
 
         Prontuario prontuarioDuplicado = prontuarioToDuplicate.duplicar(novoUsuario);
         return prontuarioRepository.save(prontuarioDuplicado);
     }
     
     public Resposta addResposta(Long idProntuario, Long idQuesito, Resposta respostaNova) {
-        if(this.getById(idProntuario).getEhTemplate())throw new ProntuarioTemplateException(idProntuario);
+        Prontuario prontuario = this.getById(idProntuario);
+        if(prontuario.getEhTemplate()) {
+            throw new ProntuarioTemplateException(idProntuario);
+        }
         Quesito quesito = quesitoService.getById(idQuesito);
         // if(!relacionadas(idProntuario, quesito))
-        Prontuario acomparar = quesitoService.findProntuario(quesito);
+        // Prontuario acomparar = quesitoService.findProntuario(quesito);
         // System.out.println("-----------------------------------------------------------");
         // System.out.println(acomparar.getId());
         // System.out.println("-----------------------------------------------------------");
-        if(acomparar == null || !Objects.equals(acomparar.getId(), idProntuario))
+        //if(acomparar == null || !Objects.equals(acomparar.getId(), idProntuario))
+        //    throw new QuesitoNotInProntuarioException(idProntuario, idQuesito);
+
+        
+        Prontuario prontuarioDoQuesito = quesito.getProntuario();
+        if(prontuarioDoQuesito == null || !prontuarioDoQuesito.getId().equals(idProntuario)) {
             throw new QuesitoNotInProntuarioException(idProntuario, idQuesito);
+        }
         Resposta respostaCriada;
         if(quesito.getResposta() == null){
             respostaCriada = respostaService.create(respostaNova);
@@ -145,33 +180,10 @@ public class ProntuarioService {
 
     public Prontuario addProntuarioFromTemplate(Long idTemplate) {
         Prontuario prontuarioTemplate = this.getById(idTemplate);
-        if(/*prontuarioTemplate == null ||*/ !prontuarioTemplate.getEhTemplate()) throw new ProntuarioNotTemplateException(idTemplate);
+        if(!prontuarioTemplate.getEhTemplate()) throw new ProntuarioNotTemplateException(idTemplate);
         Prontuario prontuarioCriado = prontuarioTemplate.duplicar(null);
         prontuarioCriado.setEhTemplate(false);
         return prontuarioRepository.save(prontuarioCriado);
-    }
-
-    private boolean relacionadas(Long idProntuario, Quesito quesito){
-        Quesito busca = quesito;
-        Secao secao = null;
-        // while(true){
-        //     if(secao == null){
-        //         if(busca.getSuperQuesito() != null)busca = busca.getSuperQuesito();
-        //         else secao = busca.getSecao();
-        //     }else{
-        //         if(secao.getSuperSecao() != null)secao = secao.getSuperSecao();
-        //         else return Objects.equals(secao.getProntuario().getId(), idProntuario);
-        //     }
-        // }
-
-        while(secao == null || secao.getSuperSecao() != null){
-            if(busca.getSuperQuesito() != null)busca = busca.getSuperQuesito();
-            else secao = busca.getSecao();
-            if(secao != null){
-                if(secao.getSuperSecao() != null)secao = secao.getSuperSecao();
-            }
-        }
-        return Objects.equals(secao.getProntuario().getId(), idProntuario);
     }
 
     public Map<String, String> getDiagnosticoLLM(Long idProntuario) {

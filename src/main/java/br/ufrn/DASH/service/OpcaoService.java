@@ -35,6 +35,10 @@ public class OpcaoService {
         );
     }
 
+    public List<Opcao> getAllByIds(List<Long> ids) {
+        return opcaoRepository.findAllById(ids);
+    }
+
     public Opcao update(Long id, Opcao opcao) {
         Opcao opcaoExistente = this.getById(id);
         

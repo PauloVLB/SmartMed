@@ -7,11 +7,15 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.Named;
 
+import br.ufrn.DASH.mapper.opcao.OpcaoMapper;
 import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Resposta;
 import static br.ufrn.DASH.model.interfaces.Generics.TToIds;
 
-@Mapper(componentModel= MappingConstants.ComponentModel.SPRING)
+@Mapper(
+    componentModel= MappingConstants.ComponentModel.SPRING,
+    uses = {OpcaoMapper.class}    
+)
 public interface RespostaMapper {
     @Mapping(target = "conteudo")
     @Mapping(target = "id", ignore = true)
@@ -30,6 +34,12 @@ public interface RespostaMapper {
     @Mapping(target = "opcoesMarcadasIds", source = "opcoesMarcadas", qualifiedByName = "opcoesToIds")
     @Mapping(target = "idQuesito", source = "quesito.id")
     RespostaOutput toRespostaOutput(Resposta resposta);
+
+    @Mapping(target = "id")
+    @Mapping(target = "conteudo")
+    @Mapping(target = "opcoesMarcadas", source = "opcoesMarcadas")
+    @Mapping(target = "idQuesito", source = "quesito.id")
+    RespostaCompleteOutput toRespostaCompleteOutput(Resposta resposta);
 
     @Named("opcoesToIds")
     default List<Long> opcoesToIds(List<Opcao> opcoes) {

@@ -20,6 +20,7 @@ import br.ufrn.DASH.mapper.diagnostico.DiagnosticoCreate;
 import br.ufrn.DASH.mapper.diagnostico.DiagnosticoMapper;
 import br.ufrn.DASH.mapper.diagnostico.DiagnosticoOutput;
 import br.ufrn.DASH.mapper.opcao.OpcaoOutput;
+import br.ufrn.DASH.mapper.prontuario.ProntuarioCompleteOutput;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioCreate;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioMapper;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioOutput;
@@ -72,6 +73,15 @@ public class ProntuarioController {
         return new ResponseEntity<ProntuarioOutput>(prontuarioOutput, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}/complete")
+    public ResponseEntity<ProntuarioCompleteOutput> getByIdComplete(
+        @PathVariable Long id, 
+        @RequestParam(defaultValue = "true") boolean incluirDesabilitados
+    ) {
+        Prontuario prontuario = prontuarioService.getById(id, incluirDesabilitados);
+        ProntuarioCompleteOutput prontuarioOutput = prontuarioMapper.toProntuarioCompleteOutput(prontuario);
+        return new ResponseEntity<ProntuarioCompleteOutput>(prontuarioOutput, HttpStatus.OK);
+    }
 
     @GetMapping
     public ResponseEntity<List<ProntuarioOutput>> getAll() {

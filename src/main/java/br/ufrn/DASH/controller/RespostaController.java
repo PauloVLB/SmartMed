@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.ufrn.DASH.mapper.opcao.OpcaoMapper;
 import br.ufrn.DASH.mapper.opcao.OpcaoOutput;
+import br.ufrn.DASH.mapper.opcao.OpcoesListaUpdate;
 import br.ufrn.DASH.mapper.resposta.RespostaCreate;
 import br.ufrn.DASH.mapper.resposta.RespostaMapper;
 import br.ufrn.DASH.mapper.resposta.RespostaOutput;
@@ -82,7 +84,7 @@ public class RespostaController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
-    @PutMapping("/{idResposta}/addOpcaoMarcada/{idOpcao}")
+    @PatchMapping("/{idResposta}/addOpcaoMarcada/{idOpcao}")
     public ResponseEntity<OpcaoOutput> addOpcaoMarcada(@PathVariable Long idResposta, @PathVariable Long idOpcao){        
         Opcao opcaoMarcada = respostaService.addOpcaoMarcada(idResposta, idOpcao);
         OpcaoOutput opcaoOutput = opcaoMapper.toOpcaoOutput(opcaoMarcada);
@@ -90,4 +92,13 @@ public class RespostaController {
 
     }
 
+    @PutMapping("/{idResposta}/setOpcoesMarcadas")
+    public ResponseEntity<List<OpcaoOutput>> setOpcoesMarcadas(@PathVariable Long idResposta, @RequestBody OpcoesListaUpdate opcoesMarcadas){
+        List<Opcao> opcoes = respostaService.setOpcoesMarcadas(idResposta, opcoesMarcadas.opcoesMarcadasIds());
+        List<OpcaoOutput> opcoesOutput = opcoes
+                    .stream()
+                    .map(opcaoMapper::toOpcaoOutput)
+                    .toList();
+        return new ResponseEntity<List<OpcaoOutput>>(opcoesOutput, HttpStatus.OK);
+    }
 }

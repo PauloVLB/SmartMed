@@ -170,8 +170,7 @@ public class QuesitoService {
         return opcao;
     }
     
-    public Boolean estaHabilitado(Long id) {
-        Quesito quesito = this.getById(id);
+    public Boolean estaHabilitado(Quesito quesito) {
         List<Opcao> opcoesHabilitadoras = quesito.getOpcoesHabilitadoras();
         if(opcoesHabilitadoras.isEmpty()){
             return true;
@@ -195,7 +194,11 @@ public class QuesitoService {
             
         }
         return false;
+    }
 
+    public Boolean estaHabilitado(Long id) {
+        Quesito quesito = this.getById(id);
+        return estaHabilitado(quesito);
     }
 
     protected Prontuario findProntuario(Quesito quesito) {

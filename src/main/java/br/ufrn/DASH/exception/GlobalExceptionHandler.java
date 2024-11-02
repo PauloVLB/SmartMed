@@ -89,4 +89,54 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(DiagnosticoNotInProntuarioException.class)
+    public ResponseEntity<Map<String, Object>> handleDiagnosticoNotInProncuarioException(DiagnosticoNotInProntuarioException ex){
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("status", HttpStatus.NOT_FOUND.value());
+        errorResponse.put("error", HttpStatus.NOT_FOUND.getReasonPhrase());
+        errorResponse.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(OpcaoMarcadaAlreadyInRespostaException.class)
+    public ResponseEntity<Map<String, Object>> handleOpcaoMarcadaAlreadyInRespostaException(OpcaoMarcadaAlreadyInRespostaException ex){
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
+        errorResponse.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        errorResponse.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(OpcaoAlreadyInDiagnosticoException.class)
+    public ResponseEntity<Map<String, Object>> handleOpcaoAlreadyInDiagnosticoException(OpcaoAlreadyInDiagnosticoException ex){
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
+        errorResponse.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        errorResponse.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(OpcaoNotInDiagnosticoExecption.class)
+    public ResponseEntity<Map<String, Object>> handleOpcaoNotInDiagnosticoExecption(OpcaoNotInDiagnosticoExecption ex){
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("status", HttpStatus.NOT_FOUND.value());
+        errorResponse.put("error", HttpStatus.NOT_FOUND.getReasonPhrase());
+        errorResponse.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DiagnosticoAndOpcaoIncompatibleException.class)
+    public ResponseEntity<Map<String, Object>> handleDiagnosticoAndOpcaoIncompatibleException(DiagnosticoAndOpcaoIncompatibleException ex){
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("status", HttpStatus.NOT_FOUND.value());
+        errorResponse.put("error", HttpStatus.NOT_FOUND.getReasonPhrase());
+        errorResponse.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.ufrn.DASH.exception.EntityNotFoundException;
+import br.ufrn.DASH.model.Prontuario;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.repository.SecaoRepository;
@@ -104,5 +105,13 @@ public class SecaoService {
         // }
         
         return secao.getSubSecoes();
+    }
+
+    protected Prontuario findProntuario(Secao secao) {
+        if(secao.getSuperSecao() != null){
+            return this.findProntuario(secao.getSuperSecao());
+        }else{
+            return secao.getProntuario();
+        }
     }
 }

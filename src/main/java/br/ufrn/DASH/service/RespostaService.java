@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.ufrn.DASH.exception.EntityNotFoundException;
+import br.ufrn.DASH.exception.OpcaoMarcadaAlreadyInRespostaException;
 import br.ufrn.DASH.exception.RespostaAndOpcaoIncompatibleException;
 import br.ufrn.DASH.exception.RespostaFullOfOpcaoException;
 import br.ufrn.DASH.model.Opcao;
@@ -73,8 +74,11 @@ public class RespostaService {
         if(resposta.getQuesito().getTipoResposta() == TipoResposta.OBJETIVA_SIMPLES && resposta.getOpcoesMarcadas().isEmpty()){
             resposta.getOpcoesMarcadas().add(opcao);
         } else if(resposta.getQuesito().getTipoResposta() == TipoResposta.OBJETIVA_MULTIPLA){
-            // TODO: exceção para quando marcar a mesma opção várias vezes
-            resposta.getOpcoesMarcadas().add(opcao);
+            if(resposta.getOpcoesMarcadas().contains(opcao)){
+                throw new OpcaoMarcadaAlreadyInRespostaException(idResposta, idOpcao);
+            }else{
+                resposta.getOpcoesMarcadas().add(opcao);
+            }
         } else{
             throw new RespostaFullOfOpcaoException(idResposta);
         }

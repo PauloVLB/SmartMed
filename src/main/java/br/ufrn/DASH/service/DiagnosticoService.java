@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import br.ufrn.DASH.exception.EntityNotFoundException;
+import br.ufrn.DASH.exception.OpcaoAlreadyInDiagnosticoException;
+import br.ufrn.DASH.exception.OpcaoNotInDiagnosticoExecption;
 import br.ufrn.DASH.model.Diagnostico;
 import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.repository.DiagnosticoRepository;
@@ -55,12 +57,14 @@ public class DiagnosticoService {
     public Opcao addOpcao(Long idDiagnostico, Long idOpcao) {
         Diagnostico diagnostico = this.getById(idDiagnostico);
         Opcao opcao = opcaoService.getById(idOpcao);
-
-        // TODO: checar se a opcao é do prontuário do diagnóstico
         
+        if(diagnostico.getProntuario() == opcaoService.findProntuario(opcao)){
+            throw new OpcaoAlreadyInDiagnosticoException(idDiagnostico, idOpcao);
+        }
+
+
         if(diagnostico.getOpcoesMarcadas().contains(opcao)){
-            // TODO: exceção para a opção já está no diagnóstico
-            // throw new exception(idDiagnostico, idOpcao);
+            throw new OpcaoAlreadyInDiagnosticoException(idDiagnostico, idOpcao);
         }
 
         diagnostico.getOpcoesMarcadas().add(opcao);
@@ -73,8 +77,7 @@ public class DiagnosticoService {
         Opcao opcao = opcaoService.getById(idOpcao);
         
         if(!diagnostico.getOpcoesMarcadas().contains(opcao)){
-            // TODO: exceção para a opção não está no diagnóstico
-            // throw new exception(idDiagnostico, idOpcao);
+            throw new OpcaoNotInDiagnosticoExecption(idDiagnostico, idOpcao);
         }else{
             diagnostico.getOpcoesMarcadas().remove(opcao);
             diagnosticoRepository.save(diagnostico);

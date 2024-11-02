@@ -9,6 +9,7 @@ import br.ufrn.DASH.model.enums.TipoResposta;
 import br.ufrn.DASH.model.interfaces.GenericEntity;
 import br.ufrn.DASH.model.interfaces.Item;
 import br.ufrn.DASH.model.interfaces.ItemUtils;
+import br.ufrn.DASH.model.interfaces.Ordenavel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,7 +31,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Quesito implements GenericEntity, Item {
+public class Quesito implements GenericEntity, Item, Ordenavel{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

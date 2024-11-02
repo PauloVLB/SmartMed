@@ -1,12 +1,14 @@
 package br.ufrn.DASH.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import br.ufrn.DASH.exception.EntityNotFoundException;
-import br.ufrn.DASH.model.Prontuario;
+import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.repository.SecaoRepository;
@@ -16,6 +18,10 @@ public class SecaoService {
 
     @Autowired
     private SecaoRepository secaoRepository;
+
+    @Autowired
+    @Lazy
+    private QuesitoService quesitoService;
 
     public Secao create(Secao secao) {
         return secaoRepository.save(secao);
@@ -107,11 +113,17 @@ public class SecaoService {
         return secao.getSubSecoes();
     }
 
-    protected Prontuario findProntuario(Secao secao) {
-        if(secao.getSuperSecao() != null){
-            return this.findProntuario(secao.getSuperSecao());
-        }else{
-            return secao.getProntuario();
+    protected List<Opcao> getOpcoesMarcadas(Secao secao) {
+        List<Opcao> retorno = new ArrayList<>();
+
+        for (Quesito quesito : secao.getQuesitos()) {
+            retorno.addAll(quesitoService.getOpcoesMarcadas(quesito));
         }
+        for (Secao subSecao : secao.getSubSecoes()) {
+            retorno.addAll(this.getOpcoesMarcadas(subSecao));
+        }
+
+    
+        return retorno;
     }
 }

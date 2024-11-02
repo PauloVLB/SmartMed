@@ -1,13 +1,10 @@
 package br.ufrn.DASH.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +15,13 @@ import br.ufrn.DASH.exception.ProntuarioTemplateException;
 import br.ufrn.DASH.exception.QuesitoNotInProntuarioException;
 import br.ufrn.DASH.mapper.llm.LLMResponse;
 import br.ufrn.DASH.model.Diagnostico;
+import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Prontuario;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.model.Usuario;
+import static br.ufrn.DASH.model.interfaces.Generics.ordenar;
 import br.ufrn.DASH.repository.ProntuarioRepository;
 
 @Service
@@ -39,6 +38,9 @@ public class ProntuarioService {
 
     @Autowired
     private QuesitoService quesitoService;
+
+    @Autowired
+    private SecaoService secaoService;
 
     @Autowired
     private LLMService llmService;
@@ -261,6 +263,34 @@ public class ProntuarioService {
         }else{
             throw new DiagnosticoNotInProntuarioException(idProntuario, idDiagnostico);
         }
+    }
+
+    public Diagnostico getDiagnostico(Long idProntuario) {
+        Prontuario prontuario = this.getById(idProntuario);
+        List<Opcao> opcoesMarcadas = this.getOpcoesMarcadas(prontuario);
+
+        for (Diagnostico diagnostico : prontuario.getDiagnosticos()) {
+            if(ehSubsequencia(diagnostico.getOpcoesMarcadas(), opcoesMarcadas))
+                return diagnostico;
+        }
+        
+        return Diagnostico.inconclusivo();
+    }
+
+    private List<Opcao> getOpcoesMarcadas(Prontuario prontuario) {
+        List<Opcao> retorno = new ArrayList<>();
+        
+        for (Secao secao : prontuario.getSecoes()) {
+            retorno.addAll(secaoService.getOpcoesMarcadas(secao));
+        }
+
+        ordenar(retorno);
+
+        return retorno;
+    }
+
+    private boolean ehSubsequencia(List<Opcao> opcoesMarcadas, List<Opcao> opcoesMarcadas0) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

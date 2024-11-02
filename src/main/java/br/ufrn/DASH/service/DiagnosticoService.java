@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import br.ufrn.DASH.exception.DiagnosticoAndOpcaoIncompatibleException;
 import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.exception.OpcaoAlreadyInDiagnosticoException;
 import br.ufrn.DASH.exception.OpcaoNotInDiagnosticoExecption;
@@ -58,8 +59,8 @@ public class DiagnosticoService {
         Diagnostico diagnostico = this.getById(idDiagnostico);
         Opcao opcao = opcaoService.getById(idOpcao);
         
-        if(diagnostico.getProntuario() == opcaoService.findProntuario(opcao)){
-            throw new OpcaoAlreadyInDiagnosticoException(idDiagnostico, idOpcao);
+        if(diagnostico.getProntuario() != opcao.getQuesito().getProntuario()){
+            throw new DiagnosticoAndOpcaoIncompatibleException(idDiagnostico, idOpcao);
         }
 
 

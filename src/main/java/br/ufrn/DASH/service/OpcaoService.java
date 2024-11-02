@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.model.Opcao;
-import br.ufrn.DASH.model.Prontuario;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.repository.OpcaoRepository;
 
@@ -74,12 +73,12 @@ public class OpcaoService {
         return opcao.getQuesitosHabilitados();
     }
 
-    protected Prontuario findProntuario(Opcao opcao) {
-        // TODO Auto-generated method stub
-        if(opcao.getQuesito() == null){
-            return null;
-        }else{
-            return quesitoService.findProntuario(opcao.getQuesito());
-        }
-    }
+    // protected Prontuario findProntuario(Opcao opcao) {
+    //     // TODO Auto-generated method stub
+    //     if(opcao.getQuesito() == null){
+    //         return null;
+    //     }else{
+    //         return quesitoService.findProntuario(opcao.getQuesito());
+    //     }
+    // }
 }

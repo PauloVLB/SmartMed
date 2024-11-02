@@ -1,6 +1,9 @@
 package br.ufrn.DASH.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import java.util.Map;
 import java.util.ArrayList;
@@ -8,11 +11,13 @@ import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.ufrn.DASH.exception.DiagnosticoNotInProntuarioException;
 import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.exception.ProntuarioNotTemplateException;
 import br.ufrn.DASH.exception.ProntuarioTemplateException;
 import br.ufrn.DASH.exception.QuesitoNotInProntuarioException;
 import br.ufrn.DASH.mapper.llm.LLMResponse;
+import br.ufrn.DASH.model.Diagnostico;
 import br.ufrn.DASH.model.Prontuario;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Resposta;
@@ -37,6 +42,9 @@ public class ProntuarioService {
 
     @Autowired
     private LLMService llmService;
+
+    @Autowired
+    private DiagnosticoService diagnosticoService;
 
     public Prontuario create(Prontuario prontuario) {
         return prontuarioRepository.save(prontuario);
@@ -141,6 +149,14 @@ public class ProntuarioService {
             throw new ProntuarioTemplateException(idProntuario);
         }
         Quesito quesito = quesitoService.getById(idQuesito);
+        // if(!relacionadas(idProntuario, quesito))
+        // Prontuario acomparar = quesitoService.findProntuario(quesito);
+        // System.out.println("-----------------------------------------------------------");
+        // System.out.println(acomparar.getId());
+        // System.out.println("-----------------------------------------------------------");
+        //if(acomparar == null || !Objects.equals(acomparar.getId(), idProntuario))
+        //    throw new QuesitoNotInProntuarioException(idProntuario, idQuesito);
+
         
         Prontuario prontuarioDoQuesito = quesito.getProntuario();
         if(prontuarioDoQuesito == null || !prontuarioDoQuesito.getId().equals(idProntuario)) {
@@ -218,6 +234,33 @@ public class ProntuarioService {
         json.append("}");
 
         return json.toString();
+    }
+
+    public Diagnostico addDiagnostico(Long idProntuario, Diagnostico diagnostico) {
+        Prontuario prontuario = this.getById(idProntuario);
+        diagnostico.setProntuario(prontuario);
+        
+        diagnostico = diagnosticoService.create(diagnostico);
+
+        prontuario.getDiagnosticos().add(diagnostico);
+
+        this.create(prontuario);
+        // diagnostico.getOpcoesMarcadas().add(prontuario);
+        // diagnosticoRepository.save(diagnostico);
+        return diagnostico;
+    }
+
+    public void removeDiagnostico(Long idProntuario, Long idDiagnostico) {
+        Prontuario prontuario = this.getById(idProntuario);
+        Diagnostico diagnostico = diagnosticoService.getById(idDiagnostico);
+        
+        if(prontuario.getDiagnosticos().contains(diagnostico)){
+            prontuario.getDiagnosticos().remove(diagnostico);
+            this.create(prontuario);
+            diagnosticoService.delete(idDiagnostico);
+        }else{
+            throw new DiagnosticoNotInProntuarioException(idProntuario, idDiagnostico);
+        }
     }
 
 }

@@ -9,9 +9,10 @@ import org.springframework.stereotype.Service;
 import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.exception.OpcaoHabilitadoraAlreadyInQuesitoException;
 import br.ufrn.DASH.model.Opcao;
+import br.ufrn.DASH.model.Prontuario;
 import br.ufrn.DASH.model.Quesito;
-import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.model.Resposta;
+import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.repository.QuesitoRepository;
 
 @Service
@@ -198,5 +199,18 @@ public class QuesitoService {
     public Boolean estaHabilitado(Long id) {
         Quesito quesito = this.getById(id);
         return estaHabilitado(quesito);
+    }
+
+    protected Prontuario findProntuario(Quesito quesito) {
+        // TODO Auto-generated method stub
+        if(quesito.getSuperQuesito() != null){
+            return this.findProntuario(quesito.getSuperQuesito());
+        }else{
+            if(quesito.getSecao() == null){
+                return null;
+            }else{
+                return secaoService.findProntuario(quesito.getSecao());
+            }
+        }
     }
 }

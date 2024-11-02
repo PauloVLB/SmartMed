@@ -43,6 +43,8 @@ public class Prontuario implements GenericEntity{
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "prontuario")
     private List<Secao> secoes = new ArrayList<Secao>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "prontuario")
+    private List<Diagnostico> diagnosticos = new ArrayList<Diagnostico>();
     public List<Secao> getSecoes() {
         ItemUtils.ordenar(secoes);
         return secoes;

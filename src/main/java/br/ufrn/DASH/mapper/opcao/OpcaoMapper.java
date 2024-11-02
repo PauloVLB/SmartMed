@@ -1,7 +1,5 @@
 package br.ufrn.DASH.mapper.opcao;
 
-import static br.ufrn.DASH.model.interfaces.Generics.TToIds;
-
 import java.util.List;
 
 import org.mapstruct.Mapper;
@@ -9,8 +7,10 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.Named;
 
+import br.ufrn.DASH.model.Diagnostico;
 import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Quesito;
+import static br.ufrn.DASH.model.interfaces.Generics.TToIds;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface OpcaoMapper {
@@ -20,6 +20,7 @@ public interface OpcaoMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "quesito", ignore = true)
     @Mapping(target = "quesitosHabilitados", ignore = true) 
+    @Mapping(target = "diagnosticos", ignore = true)
     Opcao toOpcaoFromCreate(OpcaoCreate opcaoCreate);
 
     @Mapping(target = "textoAlternativa")
@@ -27,12 +28,14 @@ public interface OpcaoMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "quesito", ignore = true)
     @Mapping(target = "quesitosHabilitados", ignore = true)
+    @Mapping(target = "diagnosticos", ignore = true)
     Opcao toOpcaoFromUpdate(OpcaoUpdate opcaoUpdate);
 
     @Mapping(target = "id")
     @Mapping(target = "textoAlternativa")
     @Mapping(target = "ordem")
     @Mapping(target = "quesitoId", source = "quesito.id")
+    @Mapping(target = "diagnosticosIds", source = "diagnosticos", qualifiedByName = "diagnosticosToIds")
     @Mapping(target = "quesitosHabilitadosIds", source = "quesitosHabilitados", qualifiedByName = "quesitosToIds")
     OpcaoOutput toOpcaoOutput(Opcao opcao);
 
@@ -47,5 +50,10 @@ public interface OpcaoMapper {
     @Named("quesitosToIds")
     default List<Long> quesitosToIds(List<Quesito> quesitos) {
         return TToIds(quesitos);
+    }
+
+    @Named("diagnosticosToIds")
+    default List<Long> diagnosticosToIds(List<Diagnostico> diagnosticos) {
+        return TToIds(diagnosticos);
     }
 }

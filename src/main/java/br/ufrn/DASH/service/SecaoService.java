@@ -40,10 +40,6 @@ public class SecaoService {
     public Secao update(Long id, Secao secao) {
         Secao secaoExistente = this.getById(id);
         
-        // if (secaoExistente == null) {
-        //     return null;
-        // }
-        
         secaoExistente.setTitulo(secao.getTitulo());
         secaoExistente.setOrdem(secao.getOrdem());
         secaoExistente.setNivel(secao.getNivel());
@@ -63,10 +59,6 @@ public class SecaoService {
     public Secao addSubSecao(Long idSuperSecao, Secao subSecao) {
         Secao superSecao = this.getById(idSuperSecao);
         
-        // if (superSecao == null) {
-        //     return null;
-        // }
-        
         subSecao.setOrdem(superSecao.getSubSecoes().size());
         subSecao.setNivel(superSecao.getNivel() + 1);
 
@@ -80,10 +72,6 @@ public class SecaoService {
     public Quesito addQuesito(Long idSecao, Quesito quesito) {
         Secao secao = this.getById(idSecao);
         
-        // if (secao == null) {
-        //     return null;
-        // }
-        
         quesito.setOrdem(secao.getQuesitos().size());
         quesito.setNivel(secao.getNivel() + 1);
         quesito.setSecao(secao);
@@ -96,19 +84,11 @@ public class SecaoService {
     public List<Quesito> getQuesitos(Long idSecao) {
         Secao secao = this.getById(idSecao);
         
-        // if (secao == null) {
-        //     return null;
-        // }
-        
         return secao.getQuesitos();
     }
 
     public List<Secao> getSubSecoes(Long idSecao) {
         Secao secao = this.getById(idSecao);
-        
-        // if (secao == null) {
-        //     return null;
-        // }
         
         return secao.getSubSecoes();
     }

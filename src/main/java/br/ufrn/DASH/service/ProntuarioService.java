@@ -151,14 +151,6 @@ public class ProntuarioService {
             throw new ProntuarioTemplateException(idProntuario);
         }
         Quesito quesito = quesitoService.getById(idQuesito);
-        // if(!relacionadas(idProntuario, quesito))
-        // Prontuario acomparar = quesitoService.findProntuario(quesito);
-        // System.out.println("-----------------------------------------------------------");
-        // System.out.println(acomparar.getId());
-        // System.out.println("-----------------------------------------------------------");
-        //if(acomparar == null || !Objects.equals(acomparar.getId(), idProntuario))
-        //    throw new QuesitoNotInProntuarioException(idProntuario, idQuesito);
-
         
         Prontuario prontuarioDoQuesito = quesito.getProntuario();
         if(prontuarioDoQuesito == null || !prontuarioDoQuesito.getId().equals(idProntuario)) {
@@ -247,8 +239,6 @@ public class ProntuarioService {
         prontuario.getDiagnosticos().add(diagnostico);
 
         this.create(prontuario);
-        // diagnostico.getOpcoesMarcadas().add(prontuario);
-        // diagnosticoRepository.save(diagnostico);
         return diagnostico;
     }
 
@@ -289,8 +279,25 @@ public class ProntuarioService {
         return retorno;
     }
 
-    private boolean ehSubsequencia(List<Opcao> opcoesMarcadas, List<Opcao> opcoesMarcadas0) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    private boolean ehSubsequencia(List<Opcao> opcoesDiagnostico, List<Opcao> opcoesResposta) {
+        int slow = 0;
+        int fast = 0;
+        int size = opcoesResposta.size();
+
+        while (fast < size) {
+            if(opcoesDiagnostico.get(slow).getOrdem().compareTo(opcoesResposta.get(fast).getOrdem()) < 0){
+                // caso opcoesDiagnostico.get(slow).getOrdem() seja menor que opcoesResposta.get(fast).getOrdem()
+                // exemplo dado os parâmetros [1,2,5] e [1,3,4,5]. Quando comparar 2 com 3, por estarem ordenados
+                // é certo que não é subsequencia 
+                return false;
+            }
+            if(opcoesDiagnostico.get(slow).getOrdem().equals(opcoesResposta.get(fast).getOrdem())){
+                slow++;
+            }
+            fast++;
+        }
+
+        return true;
     }
 
 }

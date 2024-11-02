@@ -41,10 +41,6 @@ public class OpcaoService {
     public Opcao update(Long id, Opcao opcao) {
         Opcao opcaoExistente = this.getById(id);
         
-        // if (opcaoExistente == null) {
-        //     throw new EntityNotFoundException(id, new Opcao());
-        // }
-        
         opcaoExistente.setTextoAlternativa(opcao.getTextoAlternativa());
         opcaoExistente.setOrdem(opcao.getOrdem());
 
@@ -72,13 +68,4 @@ public class OpcaoService {
         Opcao opcao = this.getById(id);
         return opcao.getQuesitosHabilitados();
     }
-
-    // protected Prontuario findProntuario(Opcao opcao) {
-    //     // TODO Auto-generated method stub
-    //     if(opcao.getQuesito() == null){
-    //         return null;
-    //     }else{
-    //         return quesitoService.findProntuario(opcao.getQuesito());
-    //     }
-    // }
 }

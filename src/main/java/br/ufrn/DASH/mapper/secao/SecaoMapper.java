@@ -50,16 +50,6 @@ public interface SecaoMapper {
     @Mapping(target = "quesitosIds", source = "quesitos", qualifiedByName = "quesitosToIds")
     SecaoOutput toSecaoOutput(Secao secao);
 
-    @Mapping(target = "id")
-    @Mapping(target = "titulo")
-    @Mapping(target = "ordem")
-    @Mapping(target = "nivel")
-    @Mapping(target = "subSecoes", source = "subSecoes")
-    @Mapping(target = "superSecaoId", source = "superSecao.id")
-    @Mapping(target = "prontuarioId", source = "prontuario.id")
-    @Mapping(target = "quesitos", source = "quesitos")
-    SecaoCompleteOutput toSecaoCompleteOutput(Secao secao);
-
     @Named("secoesToIds")
     default List<Long> secoesToIds(List<Secao> secoes) {
         return TToIds(secoes);

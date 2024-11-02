@@ -2,7 +2,7 @@ package br.ufrn.DASH.model.interfaces;
 
 import java.util.List;
 
-public interface ItemOrdenavel {
+public interface Item {
     Integer getOrdem();
-    List<ItemOrdenavel> getSubItens();
+    List<Item> getSubItens();
 } 

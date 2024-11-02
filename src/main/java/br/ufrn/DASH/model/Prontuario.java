@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.ufrn.DASH.model.interfaces.GenericEntity;
-import br.ufrn.DASH.model.interfaces.ItemOrdenavelUtils;
+import br.ufrn.DASH.model.interfaces.ItemUtils;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -44,7 +44,7 @@ public class Prontuario implements GenericEntity{
     private List<Secao> secoes = new ArrayList<Secao>();
 
     public List<Secao> getSecoes() {
-        ItemOrdenavelUtils.ordenar(secoes);
+        ItemUtils.ordenar(secoes);
         return secoes;
     }
 

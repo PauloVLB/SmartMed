@@ -62,20 +62,6 @@ public interface QuesitoMapper {
     @Mapping(target = "opcoesIds", source = "opcoes", qualifiedByName = "opcoesToIds")
     QuesitoOutput toQuesitoOutput(Quesito quesito);
 
-    @Mapping(target = "id")
-    @Mapping(target = "enunciado")
-    @Mapping(target = "obrigatorio")
-    @Mapping(target = "ordem")
-    @Mapping(target = "nivel")
-    @Mapping(target = "tipoResposta")
-    @Mapping(target = "superQuesitoId", source = "superQuesito.id")
-    @Mapping(target = "secaoId", source = "secao.id")
-    @Mapping(target = "resposta", source = "resposta")
-    @Mapping(target = "opcoesHabilitadorasIds", source = "opcoesHabilitadoras", qualifiedByName = "opcoesToIds")
-    @Mapping(target = "subQuesitos", source = "subQuesitos")
-    @Mapping(target = "opcoes", source = "opcoes")
-    QuesitoCompleteOutput toQuesitoCompleteOutput(Quesito quesito);
-
     @Named("subQuesitosToIds")
     default List<Long> subQuesitosToIds(List<Quesito> opcoes) {
         return TToIds(opcoes);

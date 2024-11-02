@@ -4,10 +4,13 @@ import java.util.List;
 
 import br.ufrn.DASH.mapper.opcao.OpcaoCompleteOutput;
 import br.ufrn.DASH.mapper.resposta.RespostaCompleteOutput;
+import br.ufrn.DASH.mapper.subItem.ItemOutput;
 import br.ufrn.DASH.model.enums.TipoResposta;
 
 public record QuesitoCompleteOutput(
     Long id,
+    String tipoDeItem,
+    String numeracao,
     String enunciado,
     Boolean obrigatorio,
     Integer ordem,
@@ -19,5 +22,5 @@ public record QuesitoCompleteOutput(
     List<Long> opcoesHabilitadorasIds,
     List<QuesitoCompleteOutput> subQuesitos,
     List<OpcaoCompleteOutput> opcoes
-    )
+    ) implements ItemOutput
 {}

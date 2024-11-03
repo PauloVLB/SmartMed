@@ -8,6 +8,7 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.Named;
 
 import br.ufrn.DASH.model.Diagnostico;
 import br.ufrn.DASH.mapper.opcao.OpcaoCompleteOutput;
@@ -65,6 +66,11 @@ public interface ProntuarioMapper {
     @Mapping(target = "secoesIds", source = "secoes", qualifiedByName = "secoesToIds")
     @Mapping(target = "diagnosticosIds", source = "diagnosticos", qualifiedByName = "diagnosticosToIds")
     ProntuarioOutput toProntuarioOutput(Prontuario prontuario);
+    
+    @Named("diagnosticosToIds")
+    default List<Long> diagnosticosToIds(List<Diagnostico> diagnosticos) {
+        return TToIds(diagnosticos);
+    }
 
     @Mapping(target = "nome")
     @Mapping(target = "descricao")
@@ -159,8 +165,5 @@ public interface ProntuarioMapper {
     default List<Long> opcoesToIds(List<Opcao> opcoes) {
         return TToIds(opcoes);
     }
-    @Named("diagnosticosToIds")
-    default List<Long> diagnosticosToIds(List<Diagnostico> diagnosticos) {
-        return TToIds(diagnosticos);
-    }
+    
 }

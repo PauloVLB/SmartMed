@@ -173,6 +173,7 @@ public class QuesitoService {
             .toList();
         
         List<Resposta> respostas = quesitosPai.stream()
+            .filter(q -> q != null)
             .filter(q -> q.getResposta() != null)
             .map(Quesito::getResposta)
             .toList();

@@ -149,7 +149,6 @@ public interface ProntuarioMapper {
     @Mapping(target = "textoAlternativa")
     @Mapping(target = "ordem")
     @Mapping(target = "quesitoId", source = "quesito.id")
-    @Mapping(target = "quesitosHabilitadosIds", source = "quesitosHabilitados", qualifiedByName = "quesitosToIds")
     OpcaoCompleteOutput toOpcaoCompleteOutput(Opcao opcao);
 
     default List<Long> opcoesToIds(List<Opcao> opcoes) {

@@ -52,11 +52,6 @@ public class OpcaoService {
     }
 
     public void delete(Long id) {
-        Opcao opcaoHabilitadora = this.getById(id);
-        List<Quesito> quesitos = opcaoHabilitadora.getQuesitosHabilitados();
-        for (Quesito quesito : quesitos) {
-            quesito.getOpcoesHabilitadoras().removeIf(opcao -> opcao.getId().equals(id));
-        }
         opcaoRepository.deleteById(id);
     }
 
@@ -68,8 +63,4 @@ public class OpcaoService {
         opcaoRepository.deleteAll();
     }
 
-    public List<Quesito> getQuesitosHabilitados(Long id) {
-        Opcao opcao = this.getById(id);
-        return opcao.getQuesitosHabilitados();
-    }
 }

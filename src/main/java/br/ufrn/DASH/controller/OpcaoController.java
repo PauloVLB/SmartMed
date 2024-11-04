@@ -17,10 +17,7 @@ import br.ufrn.DASH.mapper.opcao.OpcaoCreate;
 import br.ufrn.DASH.mapper.opcao.OpcaoMapper;
 import br.ufrn.DASH.mapper.opcao.OpcaoOutput;
 import br.ufrn.DASH.mapper.opcao.OpcaoUpdate;
-import br.ufrn.DASH.mapper.quesito.QuesitoMapper;
-import br.ufrn.DASH.mapper.quesito.QuesitoOutput;
 import br.ufrn.DASH.model.Opcao;
-import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.service.OpcaoService;
 
 @RestController
@@ -32,9 +29,6 @@ public class OpcaoController {
 
     @Autowired
     private OpcaoMapper opcaoMapper;
-
-    @Autowired
-    private QuesitoMapper quesitoMapper;
 
     @PostMapping
     public ResponseEntity<OpcaoOutput> create(@RequestBody OpcaoCreate opcaoCreate) {
@@ -81,13 +75,4 @@ public class OpcaoController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}/quesitosHabilitados")
-    public ResponseEntity<List<QuesitoOutput>> getQuesitosHabilitados(@PathVariable Long id) {
-        List<Quesito> quesitos = opcaoService.getQuesitosHabilitados(id);
-        List<QuesitoOutput> quesitosOutput = quesitos
-                .stream()
-                .map(quesitoMapper::toQuesitoOutput)
-                .toList();
-        return new ResponseEntity<List<QuesitoOutput>>(quesitosOutput, HttpStatus.OK);
-    }
 }

@@ -48,7 +48,7 @@ public class Quesito implements GenericEntity, Item {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quesito")
     private List<Opcao> opcoes = new ArrayList<Opcao>();
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "quesito_opcao_habilitadora",
                joinColumns = @JoinColumn(name = "quesito_id"),
                inverseJoinColumns = @JoinColumn(name = "opcao_id"))

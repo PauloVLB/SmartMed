@@ -64,10 +64,6 @@ public class QuesitoService {
 
     public void delete(Long id) {
         Quesito quesitoARemover = this.getById(id);
-        List<Opcao> opcoes = quesitoARemover.getOpcoesHabilitadoras();
-        for (Opcao opcao : opcoes) {
-            opcao.getQuesitosHabilitados().removeIf(quesito -> quesito.getId().equals(id));
-        }
         Secao secao = quesitoARemover.getSecao();
         if(secao != null){
             secao.getQuesitos().removeIf(quesito -> quesito.getId().equals(id));
@@ -83,10 +79,6 @@ public class QuesitoService {
     }
 
     public void deleteAll() {
-        List<Opcao> opcoes = opcaoService.getAll();
-        for (Opcao opcao : opcoes) {
-            opcao.getQuesitosHabilitados().clear();
-        }
         List<Quesito> quesitos = this.getAll();
         for (Quesito quesito : quesitos) {
             Secao secao = quesito.getSecao();
@@ -181,6 +173,7 @@ public class QuesitoService {
             .toList();
         
         List<Resposta> respostas = quesitosPai.stream()
+            .filter(q -> q != null)
             .filter(q -> q.getResposta() != null)
             .map(Quesito::getResposta)
             .toList();

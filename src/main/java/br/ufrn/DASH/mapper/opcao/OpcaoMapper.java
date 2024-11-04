@@ -19,21 +19,18 @@ public interface OpcaoMapper {
     @Mapping(target = "ordem")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "quesito", ignore = true)
-    @Mapping(target = "quesitosHabilitados", ignore = true) 
     Opcao toOpcaoFromCreate(OpcaoCreate opcaoCreate);
 
     @Mapping(target = "textoAlternativa")
     @Mapping(target = "ordem")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "quesito", ignore = true)
-    @Mapping(target = "quesitosHabilitados", ignore = true)
     Opcao toOpcaoFromUpdate(OpcaoUpdate opcaoUpdate);
 
     @Mapping(target = "id")
     @Mapping(target = "textoAlternativa")
     @Mapping(target = "ordem")
     @Mapping(target = "quesitoId", source = "quesito.id")
-    @Mapping(target = "quesitosHabilitadosIds", source = "quesitosHabilitados", qualifiedByName = "quesitosToIds")
     OpcaoOutput toOpcaoOutput(Opcao opcao);
 
 
@@ -41,7 +38,6 @@ public interface OpcaoMapper {
     @Mapping(target = "textoAlternativa")
     @Mapping(target = "ordem")
     @Mapping(target = "quesitoId", source = "quesito.id")
-    @Mapping(target = "quesitosHabilitadosIds", source = "quesitosHabilitados", qualifiedByName = "quesitosToIds")
     OpcaoCompleteOutput toOpcaoCompleteOutput(Opcao opcao);
 
     @Named("quesitosToIds")

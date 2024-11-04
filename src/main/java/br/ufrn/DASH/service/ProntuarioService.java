@@ -21,7 +21,7 @@ import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.model.Usuario;
-import static br.ufrn.DASH.model.interfaces.Generics.sortById;
+import static br.ufrn.DASH.model.interfaces.GenericEntitySortById.sortById;
 import br.ufrn.DASH.repository.ProntuarioRepository;
 
 @Service
@@ -274,7 +274,8 @@ public class ProntuarioService {
             retorno.addAll(secaoService.getOpcoesMarcadas(secao));
         }
         
-        if(!retorno.isEmpty())sortById(retorno);
+        if(!retorno.isEmpty())
+            sortById(retorno);
         
         return retorno;
     }
@@ -284,20 +285,20 @@ public class ProntuarioService {
         int fast = 0;
         int sizeFast = opcoesResposta.size();
         int sizeSlow = opcoesDiagnostico.size();
-        List<Long> opcoesDiagnosticoLong = new ArrayList<Long>();
-        List<Long> opcoesRespostaLong = new ArrayList<Long>();
+        // List<Long> opcoesDiagnosticoLong = new ArrayList<Long>();
+        // List<Long> opcoesRespostaLong = new ArrayList<Long>();
         
-        for (Opcao opcao : opcoesDiagnostico) {
-            opcoesDiagnosticoLong.add(opcao.getId());
-        }
-        for (Opcao opcao : opcoesResposta) {
-            opcoesRespostaLong.add(opcao.getId());
-        }
+        // for (Opcao opcao : opcoesDiagnostico) {
+        //     opcoesDiagnosticoLong.add(opcao.getId());
+        // }
+        // for (Opcao opcao : opcoesResposta) {
+        //     opcoesRespostaLong.add(opcao.getId());
+        // }
 
         while (fast < sizeFast && slow < sizeSlow) {
-            System.out.println("opcoesDiagnostico x opcoesResposta");
-            System.out.println(opcoesDiagnosticoLong);
-            System.out.println(opcoesRespostaLong);
+            // System.out.println("opcoesDiagnostico x opcoesResposta");
+            // System.out.println(opcoesDiagnosticoLong);
+            // System.out.println(opcoesRespostaLong);
             if(opcoesDiagnostico.get(slow).getId().compareTo(opcoesResposta.get(fast).getId()) < 0){
                 // caso opcoesDiagnostico.get(slow).getId() seja menor que opcoesResposta.get(fast).getId()
                 // exemplo dado os parâmetros [1,2,5] e [1,3,4,5]. Quando comparar 2 com 3, por estarem ordenados

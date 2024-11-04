@@ -1,6 +1,6 @@
 package br.ufrn.DASH.mapper.prontuario;
 
-import static br.ufrn.DASH.model.interfaces.Generics.TToIds;
+import static br.ufrn.DASH.model.interfaces.GenericEntityToId.TToIds;
 
 import java.util.ArrayList;
 import java.util.List;

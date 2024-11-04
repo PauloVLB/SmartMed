@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import br.ufrn.DASH.model.interfaces.GenericEntity;
 import br.ufrn.DASH.model.interfaces.Item;
 import br.ufrn.DASH.model.interfaces.ItemUtils;
-import br.ufrn.DASH.model.interfaces.Ordenavel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,7 +23,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Secao implements GenericEntity, Item, Ordenavel{
+public class Secao implements GenericEntity, Item{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -81,6 +80,14 @@ public class Secao implements GenericEntity, Item, Ordenavel{
             return this.superSecao.geProntuario();
         } else {
             return null;
+        }
+    }
+
+    public Prontuario getProntuario() {
+        if(this.superSecao != null) {
+            return this.superSecao.getProntuario();
+        } else {
+            return this.prontuario;
         }
     }
 }

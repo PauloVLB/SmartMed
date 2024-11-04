@@ -21,7 +21,7 @@ import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.model.Usuario;
-import static br.ufrn.DASH.model.interfaces.Generics.ordenar;
+import static br.ufrn.DASH.model.interfaces.Generics.sortById;
 import br.ufrn.DASH.repository.ProntuarioRepository;
 
 @Service
@@ -261,37 +261,50 @@ public class ProntuarioService {
 
         for (Diagnostico diagnostico : prontuario.getDiagnosticos()) {
             if(ehSubsequencia(diagnostico.getOpcoesMarcadas(), opcoesMarcadas))
-                return diagnostico;
+            return diagnostico;
         }
         
         return Diagnostico.inconclusivo();
     }
-
+    
     private List<Opcao> getOpcoesMarcadas(Prontuario prontuario) {
         List<Opcao> retorno = new ArrayList<>();
         
         for (Secao secao : prontuario.getSecoes()) {
             retorno.addAll(secaoService.getOpcoesMarcadas(secao));
         }
-
-        ordenar(retorno);
-
+        
+        if(!retorno.isEmpty())sortById(retorno);
+        
         return retorno;
     }
-
+    
     private boolean ehSubsequencia(List<Opcao> opcoesDiagnostico, List<Opcao> opcoesResposta) {
         int slow = 0;
         int fast = 0;
-        int size = opcoesResposta.size();
+        int sizeFast = opcoesResposta.size();
+        int sizeSlow = opcoesDiagnostico.size();
+        List<Long> opcoesDiagnosticoLong = new ArrayList<Long>();
+        List<Long> opcoesRespostaLong = new ArrayList<Long>();
+        
+        for (Opcao opcao : opcoesDiagnostico) {
+            opcoesDiagnosticoLong.add(opcao.getId());
+        }
+        for (Opcao opcao : opcoesResposta) {
+            opcoesRespostaLong.add(opcao.getId());
+        }
 
-        while (fast < size) {
-            if(opcoesDiagnostico.get(slow).getOrdem().compareTo(opcoesResposta.get(fast).getOrdem()) < 0){
-                // caso opcoesDiagnostico.get(slow).getOrdem() seja menor que opcoesResposta.get(fast).getOrdem()
+        while (fast < sizeFast && slow < sizeSlow) {
+            System.out.println("opcoesDiagnostico x opcoesResposta");
+            System.out.println(opcoesDiagnosticoLong);
+            System.out.println(opcoesRespostaLong);
+            if(opcoesDiagnostico.get(slow).getId().compareTo(opcoesResposta.get(fast).getId()) < 0){
+                // caso opcoesDiagnostico.get(slow).getId() seja menor que opcoesResposta.get(fast).getId()
                 // exemplo dado os parâmetros [1,2,5] e [1,3,4,5]. Quando comparar 2 com 3, por estarem ordenados
                 // é certo que não é subsequencia 
                 return false;
             }
-            if(opcoesDiagnostico.get(slow).getOrdem().equals(opcoesResposta.get(fast).getOrdem())){
+            if(opcoesDiagnostico.get(slow).getId().equals(opcoesResposta.get(fast).getId())){
                 slow++;
             }
             fast++;

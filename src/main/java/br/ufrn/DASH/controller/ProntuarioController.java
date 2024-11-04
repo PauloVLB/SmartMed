@@ -167,10 +167,10 @@ public class ProntuarioController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
-    @GetMapping("/{idProntuario}/diagnostico/")
-    public ResponseEntity<Boolean> diagnostico(@PathVariable Long idProntuario) {
+    @GetMapping("/{idProntuario}/diagnostico")
+    public ResponseEntity<DiagnosticoOutput> diagnostico(@PathVariable Long idProntuario) {
         Diagnostico diagnostico = prontuarioService.getDiagnostico(idProntuario);
         DiagnosticoOutput diagnosticoOutput = diagnosticoMapper.toDiagnosticoOutput(diagnostico);
-        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+        return new ResponseEntity<DiagnosticoOutput>(diagnosticoOutput, HttpStatus.OK);
     }
 }

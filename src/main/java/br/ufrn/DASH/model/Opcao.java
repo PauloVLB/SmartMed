@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.ufrn.DASH.model.interfaces.GenericEntity;
-import br.ufrn.DASH.model.interfaces.Ordenavel;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,7 +20,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Opcao implements GenericEntity, Ordenavel{
+public class Opcao implements GenericEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

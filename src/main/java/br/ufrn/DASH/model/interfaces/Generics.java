@@ -12,8 +12,7 @@ public class Generics {
         }
         return input.stream().map(T::getId).toList();
     }
-
-    public static <T extends Ordenavel> void ordenar(List<T> ordenaveis) {
-        Collections.sort(ordenaveis, Comparator.comparing(T::getOrdem));
+    public static <T extends GenericEntity> void sortById(List<T> ordenaveis) {
+        Collections.sort(ordenaveis, Comparator.comparing(T::getId));
     }
 }

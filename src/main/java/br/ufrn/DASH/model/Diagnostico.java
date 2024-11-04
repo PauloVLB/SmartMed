@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.ufrn.DASH.model.interfaces.GenericEntity;
-import static br.ufrn.DASH.model.interfaces.Generics.ordenar;
+import static br.ufrn.DASH.model.interfaces.Generics.sortById;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -41,7 +41,7 @@ public class Diagnostico implements GenericEntity{
     private Prontuario prontuario;
     
     public List<Opcao> getOpcoesMarcadas(){
-        ordenar(opcoesMarcadas);
+        sortById(opcoesMarcadas);
         return opcoesMarcadas;
     }
     public static Diagnostico inconclusivo() {

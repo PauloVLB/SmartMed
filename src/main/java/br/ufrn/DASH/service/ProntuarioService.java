@@ -259,12 +259,20 @@ public class ProntuarioService {
         Prontuario prontuario = this.getById(idProntuario);
         List<Opcao> opcoesMarcadas = this.getOpcoesMarcadas(prontuario);
 
+        int qntDiagnosticos = 0;
+        Diagnostico diagnosticoToReturn = Diagnostico.inconclusivo();
         for (Diagnostico diagnostico : prontuario.getDiagnosticos()) {
-            if(ehSubsequencia(diagnostico.getOpcoesMarcadas(), opcoesMarcadas))
-            return diagnostico;
+            if(ehSubsequencia(diagnostico.getOpcoesMarcadas(), opcoesMarcadas)) {
+                qntDiagnosticos++;
+                diagnosticoToReturn = diagnostico;
+            }
         }
         
-        return Diagnostico.inconclusivo();
+        if(qntDiagnosticos > 1) {
+            diagnosticoToReturn = Diagnostico.inconclusivo();
+        } 
+
+        return diagnosticoToReturn;
     }
     
     private List<Opcao> getOpcoesMarcadas(Prontuario prontuario) {
@@ -285,24 +293,9 @@ public class ProntuarioService {
         int fast = 0;
         int sizeFast = opcoesResposta.size();
         int sizeSlow = opcoesDiagnostico.size();
-        // List<Long> opcoesDiagnosticoLong = new ArrayList<Long>();
-        // List<Long> opcoesRespostaLong = new ArrayList<Long>();
-        
-        // for (Opcao opcao : opcoesDiagnostico) {
-        //     opcoesDiagnosticoLong.add(opcao.getId());
-        // }
-        // for (Opcao opcao : opcoesResposta) {
-        //     opcoesRespostaLong.add(opcao.getId());
-        // }
 
         while (fast < sizeFast && slow < sizeSlow) {
-            // System.out.println("opcoesDiagnostico x opcoesResposta");
-            // System.out.println(opcoesDiagnosticoLong);
-            // System.out.println(opcoesRespostaLong);
             if(opcoesDiagnostico.get(slow).getId().compareTo(opcoesResposta.get(fast).getId()) < 0){
-                // caso opcoesDiagnostico.get(slow).getId() seja menor que opcoesResposta.get(fast).getId()
-                // exemplo dado os parâmetros [1,2,5] e [1,3,4,5]. Quando comparar 2 com 3, por estarem ordenados
-                // é certo que não é subsequencia 
                 return false;
             }
             if(opcoesDiagnostico.get(slow).getId().equals(opcoesResposta.get(fast).getId())){

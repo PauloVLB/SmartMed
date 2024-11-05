@@ -11,6 +11,7 @@ public record ProntuarioOutput(
     Boolean ehTemplate,
     Long usuarioId,
     List<Long> secoesIds,
+    List<Long> diagnosticosIds,
     String diagnosticoLLM
     )
 {}

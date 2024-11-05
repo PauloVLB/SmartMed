@@ -30,7 +30,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Quesito implements GenericEntity, Item {
+public class Quesito implements GenericEntity, Item{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

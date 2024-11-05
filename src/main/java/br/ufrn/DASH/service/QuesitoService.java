@@ -10,8 +10,8 @@ import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.exception.OpcaoHabilitadoraAlreadyInQuesitoException;
 import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Quesito;
-import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.model.Resposta;
+import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.repository.QuesitoRepository;
 
 @Service
@@ -48,10 +48,6 @@ public class QuesitoService {
 
     public Quesito update(Long id, Quesito quesito) {
         Quesito quesitoExistente = this.getById(id);
-        
-        // if (quesitoExistente == null) {
-        //     return null;
-        // }
         
         quesitoExistente.setEnunciado(quesito.getEnunciado());
         quesitoExistente.setOrdem(quesito.getOrdem());
@@ -98,9 +94,6 @@ public class QuesitoService {
     public Quesito addSubQuesito(Long idQuesito, Quesito subQuesito) {
         Quesito superQuesito = this.getById(idQuesito);
 
-        // if(superQuesito == null){
-        //     return null;
-        // }
         subQuesito.setOrdem(superQuesito.getSubQuesitos().size());
         subQuesito.setNivel(superQuesito.getNivel() + 1);
 
@@ -115,10 +108,6 @@ public class QuesitoService {
     public Opcao addOpcao(Long idQuesito, Opcao opcaoNovo) {
         Quesito quesito = this.getById(idQuesito);
         
-        // if (quesito == null) {
-        //     return null;
-        // }
-        
         opcaoNovo.setOrdem(quesito.getOpcoes().size());
         opcaoNovo.setQuesito(quesito);
         quesito.getOpcoes().add(opcaoNovo);
@@ -130,19 +119,11 @@ public class QuesitoService {
     public List<Opcao> getOpcoes(Long idQuesito) {
         Quesito quesito = this.getById(idQuesito);
         
-        // if (quesito == null) {
-        //     return null;
-        // }
-        
         return quesito.getOpcoes();
     }
 
     public List<Quesito> getSubQuesitos(Long idQuesito) {
         Quesito quesito = this.getById(idQuesito);
-        
-        // if (quesito == null) {
-        //     return null;
-        // }
         
         return quesito.getSubQuesitos();
     }
@@ -191,5 +172,15 @@ public class QuesitoService {
     public Boolean estaHabilitado(Long id) {
         Quesito quesito = this.getById(id);
         return estaHabilitado(quesito);
+    }
+
+    protected List<Opcao> getOpcoesMarcadas(Quesito quesito) {
+        List<Opcao> retorno = quesito.getResposta().getOpcoesMarcadas();
+
+        for (Quesito subQuesito : quesito.getSubQuesitos()) {
+            retorno.addAll(this.getOpcoesMarcadas(subQuesito));
+        }
+    
+        return retorno;
     }
 }

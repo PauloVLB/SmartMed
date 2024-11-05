@@ -28,6 +28,9 @@ public class Opcao implements GenericEntity{
     private Quesito quesito;
     
 
+    @ManyToMany(mappedBy = "opcoesMarcadas")
+    private List<Diagnostico> diagnosticos = new ArrayList<Diagnostico>();
+
     public Opcao duplicar() {
         Opcao opcao = new Opcao();
         opcao.setTextoAlternativa(this.textoAlternativa);

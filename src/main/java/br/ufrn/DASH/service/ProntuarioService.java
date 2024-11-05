@@ -1,23 +1,27 @@
 package br.ufrn.DASH.service;
 
-import java.util.List;
-
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.ufrn.DASH.exception.DiagnosticoNotInProntuarioException;
 import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.exception.ProntuarioNotTemplateException;
 import br.ufrn.DASH.exception.ProntuarioTemplateException;
 import br.ufrn.DASH.exception.QuesitoNotInProntuarioException;
 import br.ufrn.DASH.mapper.llm.LLMResponse;
+import br.ufrn.DASH.model.Diagnostico;
+import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Prontuario;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.model.Usuario;
+import static br.ufrn.DASH.model.interfaces.GenericEntitySortById.sortById;
 import br.ufrn.DASH.repository.ProntuarioRepository;
 
 @Service
@@ -36,7 +40,13 @@ public class ProntuarioService {
     private QuesitoService quesitoService;
 
     @Autowired
+    private SecaoService secaoService;
+
+    @Autowired
     private LLMService llmService;
+
+    @Autowired
+    private DiagnosticoService diagnosticoService;
 
     public Prontuario create(Prontuario prontuario) {
         return prontuarioRepository.save(prontuario);
@@ -225,6 +235,83 @@ public class ProntuarioService {
         json.append("}");
 
         return json.toString();
+    }
+
+    public Diagnostico addDiagnostico(Long idProntuario, Diagnostico diagnostico) {
+        Prontuario prontuario = this.getById(idProntuario);
+        diagnostico.setProntuario(prontuario);
+        
+        diagnostico = diagnosticoService.create(diagnostico);
+
+        prontuario.getDiagnosticos().add(diagnostico);
+
+        this.create(prontuario);
+        return diagnostico;
+    }
+
+    public void removeDiagnostico(Long idProntuario, Long idDiagnostico) {
+        Prontuario prontuario = this.getById(idProntuario);
+        Diagnostico diagnostico = diagnosticoService.getById(idDiagnostico);
+        
+        if(prontuario.getDiagnosticos().contains(diagnostico)){
+            prontuario.getDiagnosticos().remove(diagnostico);
+            this.create(prontuario);
+            diagnosticoService.delete(idDiagnostico);
+        }else{
+            throw new DiagnosticoNotInProntuarioException(idProntuario, idDiagnostico);
+        }
+    }
+
+    public Diagnostico getDiagnostico(Long idProntuario) {
+        Prontuario prontuario = this.getById(idProntuario);
+        List<Opcao> opcoesMarcadas = this.getOpcoesMarcadas(prontuario);
+
+        int qntDiagnosticos = 0;
+        Diagnostico diagnosticoToReturn = Diagnostico.inconclusivo();
+        for (Diagnostico diagnostico : prontuario.getDiagnosticos()) {
+            if(ehSubsequencia(diagnostico.getOpcoesMarcadas(), opcoesMarcadas)) {
+                qntDiagnosticos++;
+                diagnosticoToReturn = diagnostico;
+            }
+        }
+        
+        if(qntDiagnosticos > 1) {
+            diagnosticoToReturn = Diagnostico.inconclusivo();
+        } 
+
+        return diagnosticoToReturn;
+    }
+    
+    private List<Opcao> getOpcoesMarcadas(Prontuario prontuario) {
+        List<Opcao> retorno = new ArrayList<>();
+        
+        for (Secao secao : prontuario.getSecoes()) {
+            retorno.addAll(secaoService.getOpcoesMarcadas(secao));
+        }
+        
+        if(!retorno.isEmpty())
+            sortById(retorno);
+        
+        return retorno;
+    }
+    
+    private boolean ehSubsequencia(List<Opcao> opcoesDiagnostico, List<Opcao> opcoesResposta) {
+        int slow = 0;
+        int fast = 0;
+        int sizeFast = opcoesResposta.size();
+        int sizeSlow = opcoesDiagnostico.size();
+
+        while (fast < sizeFast && slow < sizeSlow) {
+            if(opcoesDiagnostico.get(slow).getId().compareTo(opcoesResposta.get(fast).getId()) < 0){
+                return false;
+            }
+            if(opcoesDiagnostico.get(slow).getId().equals(opcoesResposta.get(fast).getId())){
+                slow++;
+            }
+            fast++;
+        }
+
+        return true;
     }
 
 }

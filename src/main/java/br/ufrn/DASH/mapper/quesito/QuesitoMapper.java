@@ -10,7 +10,7 @@ import org.mapstruct.Named;
 import br.ufrn.DASH.mapper.opcao.OpcaoMapper;
 import br.ufrn.DASH.mapper.resposta.RespostaMapper;
 import br.ufrn.DASH.model.Quesito;
-import static br.ufrn.DASH.model.interfaces.Generics.TToIds;
+import static br.ufrn.DASH.model.interfaces.GenericEntityToId.TToIds;
 
 @Mapper(
     componentModel = MappingConstants.ComponentModel.SPRING,

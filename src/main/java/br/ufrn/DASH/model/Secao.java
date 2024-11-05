@@ -23,7 +23,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Secao implements GenericEntity, Item {
+public class Secao implements GenericEntity, Item{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -80,6 +80,14 @@ public class Secao implements GenericEntity, Item {
             return this.superSecao.getProntuario();
         } else {
             return null;
+        }
+    }
+
+    public Prontuario getProntuario() {
+        if(this.superSecao != null) {
+            return this.superSecao.getProntuario();
+        } else {
+            return this.prontuario;
         }
     }
 }

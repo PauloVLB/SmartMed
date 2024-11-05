@@ -41,10 +41,6 @@ public class OpcaoService {
     public Opcao update(Long id, Opcao opcao) {
         Opcao opcaoExistente = this.getById(id);
         
-        // if (opcaoExistente == null) {
-        //     throw new EntityNotFoundException(id, new Opcao());
-        // }
-        
         opcaoExistente.setTextoAlternativa(opcao.getTextoAlternativa());
         opcaoExistente.setOrdem(opcao.getOrdem());
 

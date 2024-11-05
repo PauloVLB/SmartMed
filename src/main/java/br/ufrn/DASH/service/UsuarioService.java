@@ -32,10 +32,6 @@ public class UsuarioService {
     public Usuario update(Long id, Usuario usuario) {
         Usuario usuarioExistente = this.getById(id);
         
-        // if (usuarioExistente == null) {
-        //     return null;
-        // }
-        
         usuarioExistente.setLogin(usuario.getLogin());
         usuarioExistente.setSenha(usuario.getSenha());
         usuarioExistente.setNome(usuario.getNome());

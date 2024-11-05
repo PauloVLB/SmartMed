@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.ufrn.DASH.mapper.diagnostico.DiagnosticoCreate;
+import br.ufrn.DASH.mapper.diagnostico.DiagnosticoMapper;
+import br.ufrn.DASH.mapper.diagnostico.DiagnosticoOutput;
+import br.ufrn.DASH.mapper.opcao.OpcaoOutput;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioCompleteOutput;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioCreate;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioMapper;
@@ -27,9 +31,12 @@ import br.ufrn.DASH.mapper.resposta.RespostaOutput;
 import br.ufrn.DASH.mapper.secao.SecaoCreate;
 import br.ufrn.DASH.mapper.secao.SecaoMapper;
 import br.ufrn.DASH.mapper.secao.SecaoOutput;
+import br.ufrn.DASH.model.Diagnostico;
+import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Prontuario;
 import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.Secao;
+import br.ufrn.DASH.service.DiagnosticoService;
 import br.ufrn.DASH.service.ProntuarioService;
 
 @RestController
@@ -47,6 +54,9 @@ public class ProntuarioController {
 
     @Autowired
     private RespostaMapper respostaMapper;
+
+    @Autowired
+    private DiagnosticoMapper diagnosticoMapper;
 
     @PostMapping
     public ResponseEntity<ProntuarioOutput> create(@RequestBody ProntuarioCreate prontuarioCreate) {
@@ -142,5 +152,25 @@ public class ProntuarioController {
         return new ResponseEntity<Map<String, String>>(response, HttpStatus.OK);
     }
     
+    @PostMapping("/{idProntuario}/addDiagnostico")
+    public ResponseEntity<DiagnosticoOutput> addDiagnostico(@PathVariable Long idProntuario, @RequestBody DiagnosticoCreate diagnosticoCreate) {
+        Diagnostico diagnosticoNovo = diagnosticoMapper.toDiagnosticoFromCreate(diagnosticoCreate);        
+        Diagnostico diagnosticoCriado = prontuarioService.addDiagnostico(idProntuario, diagnosticoNovo);
+        DiagnosticoOutput diagnosticoOutput = diagnosticoMapper.toDiagnosticoOutput(diagnosticoCriado);
+        return new ResponseEntity<DiagnosticoOutput>(diagnosticoOutput, HttpStatus.CREATED);
+    }
 
+    @DeleteMapping("/{idProntuario}/diagnostico/{idDiagnostico}/removeDiagnostico")
+    public ResponseEntity<Boolean> removeDiagnostico(@PathVariable Long idProntuario, @PathVariable Long idDiagnostico) {
+        // removeDiagnostico é void
+        prontuarioService.removeDiagnostico(idProntuario, idDiagnostico);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @GetMapping("/{idProntuario}/diagnostico")
+    public ResponseEntity<DiagnosticoOutput> diagnostico(@PathVariable Long idProntuario) {
+        Diagnostico diagnostico = prontuarioService.getDiagnostico(idProntuario);
+        DiagnosticoOutput diagnosticoOutput = diagnosticoMapper.toDiagnosticoOutput(diagnostico);
+        return new ResponseEntity<DiagnosticoOutput>(diagnosticoOutput, HttpStatus.OK);
+    }
 }

@@ -186,7 +186,10 @@ public class ProntuarioService {
         "Você não precisa se ater a divisão de seções e quesitos, apenas faça um diagnóstico geral do paciente. " +
         "Seu diagnóstico será avaliado por um médico especialista, que pode ou não concordar com o diagnóstico gerado. " +
         "Portanto, pode dar sugestões de exames, tratamentos, ou qualquer outra informação que julgar relevante. " +
-        "Pode assumir que o paciente é real, e que você está fazendo um diagnóstico real.\n";
+        "Pode assumir que o paciente é real, e que você está fazendo um diagnóstico real.\n" + 
+        "Sua mensagem será mostrada ao usuário, deve ser transparente para ele que você está lendo as informações " +
+        "de um JSON. Para ele deve ser apenas uma sugestão de diagnóstico.\n" +
+        "Além disso, escreva sua resposta como plain text. Não use formatação, nem imagens.\n\n";
 
         Prontuario prontuario = this.getById(idProntuario);
         prompt += toJson(prontuario);
@@ -216,7 +219,11 @@ public class ProntuarioService {
             for (Quesito quesito : secao.getQuesitos()) {
                 json.append("\t\t\t\t{\n");
                 json.append("\t\t\t\t\t\"nome\": \"").append(quesito.getEnunciado()).append("\",\n");
-                json.append("\t\t\t\t\t\"resposta\": \"").append(quesito.getResposta().getConteudo()).append("\"\n");
+                if(quesito.getResposta() != null) {
+                    json.append("\t\t\t\t\t\"resposta\": \"").append(quesito.getResposta().getConteudo()).append("\"\n");
+                } else {
+                    json.append("\t\t\t\t\t\"resposta\": \"\"\n");
+                }
                 json.append("\t\t\t\t},\n");
             }
 

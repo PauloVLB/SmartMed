@@ -44,7 +44,6 @@ public interface OpcaoMapper {
     @Mapping(target = "textoAlternativa")
     @Mapping(target = "ordem")
     @Mapping(target = "quesitoId", source = "quesito.id")
-    @Mapping(target = "quesitosHabilitadosIds", source = "quesitosHabilitados", qualifiedByName = "quesitosToIds")
     OpcaoCompleteOutput toOpcaoCompleteOutput(Opcao opcao);
 
     @Named("quesitosToIds")

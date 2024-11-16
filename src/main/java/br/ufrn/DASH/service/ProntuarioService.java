@@ -2,14 +2,17 @@ package br.ufrn.DASH.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.ufrn.DASH.exception.DiagnosticoNotInProntuarioException;
 import br.ufrn.DASH.exception.EntityNotFoundException;
+import br.ufrn.DASH.exception.ProntuarioInconsistenteException;
 import br.ufrn.DASH.exception.ProntuarioNotTemplateException;
 import br.ufrn.DASH.exception.ProntuarioTemplateException;
 import br.ufrn.DASH.exception.QuesitoNotInProntuarioException;
@@ -21,6 +24,8 @@ import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.model.Usuario;
+import br.ufrn.DASH.model.enums.TipoResposta;
+
 import static br.ufrn.DASH.model.interfaces.GenericEntitySortById.sortById;
 import br.ufrn.DASH.repository.ProntuarioRepository;
 
@@ -312,6 +317,73 @@ public class ProntuarioService {
         }
 
         return true;
+    }
+
+    public Prontuario finalizarProntuario(Long idProntuario) {
+        
+        Prontuario prontuario = this.getById(idProntuario);
+
+        StringBuilder erros = new StringBuilder("");
+        
+        // Verifica se o prontuário tem pelo menos uma seção
+        if (prontuario.getSecoes().isEmpty()) {
+            erros.append("O prontuário deve ter pelo menos uma seção.\n");
+        }
+
+        Queue<Secao> filaSecoes = new LinkedList<>(prontuario.getSecoes());
+        List<Secao> secoesSemQuesito = new ArrayList<>();
+        Queue<Quesito> filaQuesitos = new LinkedList<>();
+        List<Quesito> quesitosObjetivosSemOpcao = new ArrayList<>();
+
+        // Verifica se todas as seções tem pelo menos um quesito
+        while (!filaSecoes.isEmpty()) {
+            Secao secao = filaSecoes.poll();
+            filaSecoes.addAll(secao.getSubSecoes());
+            if(secao.getQuesitos().isEmpty()) {
+                secoesSemQuesito.add(secao);
+            }
+            filaQuesitos.addAll(secao.getQuesitos());
+        }
+        if(!secoesSemQuesito.isEmpty()) {
+            erros.append("As seguintes seções devem possuir pelo menos um quesito: ");
+            for(Secao secao : secoesSemQuesito) {
+                erros.append(secao.getTitulo() + ", ");
+            }
+            if (erros.length() > 0) {
+                erros.setLength(erros.length() - 2); // Remove the last ", "
+            }
+            erros.append("\n");
+        }
+
+        // Verifica se todos os quesitos objetivos possuem opções
+        while (!filaQuesitos.isEmpty()) {
+            Quesito quesito = filaQuesitos.poll();
+            TipoResposta tipoResposta = quesito.getTipoResposta();
+            if ((tipoResposta.equals(TipoResposta.OBJETIVA_SIMPLES) || tipoResposta.equals(TipoResposta.OBJETIVA_SIMPLES))
+            && quesito.getOpcoes().isEmpty()) {
+                quesitosObjetivosSemOpcao.add(quesito);
+            }
+            filaQuesitos.addAll(quesito.getSubQuesitos());
+        }
+
+        if(!quesitosObjetivosSemOpcao.isEmpty()) {
+            erros.append("Os seguintes quesitos objetivos devem possuir pelo menos uma opção: ");
+            for(Quesito quesito : quesitosObjetivosSemOpcao) {
+                erros.append(quesito.getEnunciado() + ", ");
+            }
+            if (erros.length() > 0) {
+                erros.setLength(erros.length() - 2); // Remove the last ", "
+            }
+            erros.append("\n");
+        }
+
+
+        if (erros.length() > 0) {
+            throw new ProntuarioInconsistenteException(erros.toString());
+        }
+
+        prontuario.setFinalizado(true);
+        return this.create(prontuario);
     }
 
 }

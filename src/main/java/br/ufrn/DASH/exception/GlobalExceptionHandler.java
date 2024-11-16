@@ -139,4 +139,14 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(ProntuarioInconsistenteException.class)
+    public ResponseEntity<Map<String, Object>> handleProntuarioInconsistenteException(ProntuarioInconsistenteException ex){
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("status", HttpStatus.UNPROCESSABLE_ENTITY.value());
+        errorResponse.put("error", HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase());
+        errorResponse.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 }

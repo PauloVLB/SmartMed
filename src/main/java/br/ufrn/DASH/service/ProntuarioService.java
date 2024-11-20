@@ -321,29 +321,55 @@ public class ProntuarioService {
 
     public Prontuario finalizarProntuario(Long idProntuario) {
         
-        Prontuario prontuario = this.getById(idProntuario);
-
-        StringBuilder erros = new StringBuilder("");
+        Prontuario prontuario = this.getById(idProntuario);       
+        Queue<Secao> filaSecoes = new LinkedList<>(prontuario.getSecoes());
+        List<Secao> listaTodasSecoes = new ArrayList<>();
+        Queue<Quesito> filaQuesitos = new LinkedList<>();
+        List<Quesito> listaTodosQuesitos = new ArrayList<>();
         
-        // Verifica se o prontuário tem pelo menos uma seção
+        // Percorre as Secoes
+        while (!filaSecoes.isEmpty()) {
+            Secao secao = filaSecoes.poll();
+            listaTodasSecoes.add(secao);
+            filaSecoes.addAll(secao.getSubSecoes());
+            filaQuesitos.addAll(secao.getQuesitos());
+        }
+        
+        // Percorre os Quesitos
+        while (!filaQuesitos.isEmpty()) {
+            Quesito quesito = filaQuesitos.poll();
+            listaTodosQuesitos.add(quesito);
+            filaQuesitos.addAll(quesito.getSubQuesitos());
+        }
+        
+        StringBuilder erros = new StringBuilder("");
+        erros = verificaProntuarioSemSecao(prontuario, erros);
+        erros = verificaSecoesSemQuesito(listaTodasSecoes, erros);
+        erros = verificaQuesitosObjetivosSemOpcao(listaTodosQuesitos, erros);
+
+        if (erros.length() > 0) {
+            throw new ProntuarioInconsistenteException(erros.toString());
+        }
+
+        prontuario.setFinalizado(true);
+        return this.create(prontuario);
+    }
+
+    private StringBuilder verificaProntuarioSemSecao(Prontuario prontuario, StringBuilder erros) {
         if (prontuario.getSecoes().isEmpty()) {
             erros.append("O prontuário deve ter pelo menos uma seção.\n");
         }
+        return erros;
+    }
 
-        Queue<Secao> filaSecoes = new LinkedList<>(prontuario.getSecoes());
+    private StringBuilder verificaSecoesSemQuesito(List<Secao> listaTodasSecoes, StringBuilder erros) {
         List<Secao> secoesSemQuesito = new ArrayList<>();
-        Queue<Quesito> filaQuesitos = new LinkedList<>();
-        List<Quesito> quesitosObjetivosSemOpcao = new ArrayList<>();
-
-        // Verifica se todas as seções tem pelo menos um quesito
-        while (!filaSecoes.isEmpty()) {
-            Secao secao = filaSecoes.poll();
-            filaSecoes.addAll(secao.getSubSecoes());
+        for (Secao secao : listaTodasSecoes) {
             if(secao.getQuesitos().isEmpty()) {
                 secoesSemQuesito.add(secao);
             }
-            filaQuesitos.addAll(secao.getQuesitos());
         }
+
         if(!secoesSemQuesito.isEmpty()) {
             erros.append("As seguintes seções devem possuir pelo menos um quesito: ");
             for(Secao secao : secoesSemQuesito) {
@@ -354,16 +380,17 @@ public class ProntuarioService {
             }
             erros.append("\n");
         }
+        return erros;
+    }
 
-        // Verifica se todos os quesitos objetivos possuem opções
-        while (!filaQuesitos.isEmpty()) {
-            Quesito quesito = filaQuesitos.poll();
+    private StringBuilder verificaQuesitosObjetivosSemOpcao(List<Quesito> listaTodosQuesitos, StringBuilder erros) {
+        List<Quesito> quesitosObjetivosSemOpcao = new ArrayList<>();
+        for (Quesito quesito : listaTodosQuesitos) {
             TipoResposta tipoResposta = quesito.getTipoResposta();
             if ((tipoResposta.equals(TipoResposta.OBJETIVA_SIMPLES) || tipoResposta.equals(TipoResposta.OBJETIVA_SIMPLES))
             && quesito.getOpcoes().isEmpty()) {
                 quesitosObjetivosSemOpcao.add(quesito);
             }
-            filaQuesitos.addAll(quesito.getSubQuesitos());
         }
 
         if(!quesitosObjetivosSemOpcao.isEmpty()) {
@@ -376,14 +403,7 @@ public class ProntuarioService {
             }
             erros.append("\n");
         }
-
-
-        if (erros.length() > 0) {
-            throw new ProntuarioInconsistenteException(erros.toString());
-        }
-
-        prontuario.setFinalizado(true);
-        return this.create(prontuario);
+        return erros;
     }
 
 }

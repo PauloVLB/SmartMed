@@ -113,6 +113,18 @@ public class ProntuarioService {
         return prontuarioRepository.save(prontuarioExistente);
     }
 
+    public Prontuario tornarPublico(Long id) {
+        Prontuario prontuario = this.getById(id);
+        prontuario.setEhPublico(true);
+        return prontuarioRepository.save(prontuario);
+    }
+
+    public Prontuario tornarPrivado(Long id) {
+        Prontuario prontuario = this.getById(id);
+        prontuario.setEhPublico(false);
+        return prontuarioRepository.save(prontuario);
+    }
+
     public void delete(Long id) {
         this.getById(id);
         prontuarioRepository.deleteById(id);

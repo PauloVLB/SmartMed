@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -111,6 +112,20 @@ public class ProntuarioController {
     public ResponseEntity<Boolean> deleteAll() {
         prontuarioService.deleteAll();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}/tornarPublico")
+    public ResponseEntity<ProntuarioOutput> tornarPublico(@PathVariable Long id) {
+        Prontuario prontuario = prontuarioService.tornarPublico(id);
+        ProntuarioOutput prontuarioOutput = prontuarioMapper.toProntuarioOutput(prontuario);
+        return new ResponseEntity<ProntuarioOutput>(prontuarioOutput, HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}/tornarPrivado")
+    public ResponseEntity<ProntuarioOutput> tornarPrivado(@PathVariable Long id) {
+        Prontuario prontuario = prontuarioService.tornarPrivado(id);
+        ProntuarioOutput prontuarioOutput = prontuarioMapper.toProntuarioOutput(prontuario);
+        return new ResponseEntity<ProntuarioOutput>(prontuarioOutput, HttpStatus.OK);
     }
 
     @PostMapping("/{idProntuario}/addSecao")

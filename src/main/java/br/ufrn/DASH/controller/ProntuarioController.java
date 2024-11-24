@@ -188,4 +188,11 @@ public class ProntuarioController {
         DiagnosticoOutput diagnosticoOutput = diagnosticoMapper.toDiagnosticoOutput(diagnostico);
         return new ResponseEntity<DiagnosticoOutput>(diagnosticoOutput, HttpStatus.OK);
     }
+
+    @PatchMapping("/{idProntuario}/finalizarProntuario")
+    public ResponseEntity<ProntuarioOutput> finalizarProntuario(@PathVariable Long idProntuario) {
+        Prontuario prontuarioFinalizado = prontuarioService.finalizarProntuario(idProntuario);
+        ProntuarioOutput prontuarioOutput = prontuarioMapper.toProntuarioOutput(prontuarioFinalizado);
+        return new ResponseEntity<ProntuarioOutput>(prontuarioOutput, HttpStatus.OK);
+    }
 }

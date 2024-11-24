@@ -346,7 +346,7 @@ public class ProntuarioService {
         StringBuilder erros = new StringBuilder("");
         erros = verificaCamposObrigatoriosDeEntidades(prontuario, listaTodasSecoes, listaTodosQuesitos, erros);
         erros = verificaProntuarioSemSecao(prontuario, erros);
-        erros = verificaSecoesSemQuesito(listaTodasSecoes, erros);
+        erros = verificaSecoesVazias(listaTodasSecoes, erros);
         erros = verificaQuesitosObjetivosSemOpcao(listaTodosQuesitos, erros);
         erros = verificaOpcoesComMesmoNome(listaTodosQuesitos, erros);
         erros = verificaOrdemOpcoesHabilitadoras(prontuario, erros);
@@ -366,17 +366,17 @@ public class ProntuarioService {
         return erros;
     }
 
-    private StringBuilder verificaSecoesSemQuesito(List<Secao> listaTodasSecoes, StringBuilder erros) {
-        List<Secao> secoesSemQuesito = new ArrayList<>();
+    private StringBuilder verificaSecoesVazias(List<Secao> listaTodasSecoes, StringBuilder erros) {
+        List<Secao> secoesVazias = new ArrayList<>();
         for (Secao secao : listaTodasSecoes) {
-            if(secao.getQuesitos().isEmpty()) {
-                secoesSemQuesito.add(secao);
+            if(secao.getSubItens().isEmpty()) {
+                secoesVazias.add(secao);
             }
         }
 
-        if(!secoesSemQuesito.isEmpty()) {
-            erros.append("As seguintes seções devem possuir pelo menos um quesito: ");
-            for(Secao secao : secoesSemQuesito) {
+        if(!secoesVazias.isEmpty()) {
+            erros.append("As seguintes seções devem possuir pelo menos um quesito ou subseção: ");
+            for(Secao secao : secoesVazias) {
                 erros.append(secao.getId() + ", ");
             }
             if (erros.length() > 0) {

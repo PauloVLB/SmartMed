@@ -25,6 +25,7 @@ import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.model.Usuario;
 import br.ufrn.DASH.model.enums.TipoResposta;
+import br.ufrn.DASH.model.interfaces.Item;
 
 import static br.ufrn.DASH.model.interfaces.GenericEntitySortById.sortById;
 import br.ufrn.DASH.repository.ProntuarioRepository;
@@ -343,9 +344,12 @@ public class ProntuarioService {
         }
         
         StringBuilder erros = new StringBuilder("");
+        erros = verificaCamposObrigatoriosDeEntidades(prontuario, listaTodasSecoes, listaTodosQuesitos, erros);
         erros = verificaProntuarioSemSecao(prontuario, erros);
-        erros = verificaSecoesSemQuesito(listaTodasSecoes, erros);
+        erros = verificaSecoesVazias(listaTodasSecoes, erros);
         erros = verificaQuesitosObjetivosSemOpcao(listaTodosQuesitos, erros);
+        erros = verificaOpcoesComMesmoNome(listaTodosQuesitos, erros);
+        erros = verificaOrdemOpcoesHabilitadoras(prontuario, erros);
 
         if (erros.length() > 0) {
             throw new ProntuarioInconsistenteException(erros.toString());
@@ -362,18 +366,18 @@ public class ProntuarioService {
         return erros;
     }
 
-    private StringBuilder verificaSecoesSemQuesito(List<Secao> listaTodasSecoes, StringBuilder erros) {
-        List<Secao> secoesSemQuesito = new ArrayList<>();
+    private StringBuilder verificaSecoesVazias(List<Secao> listaTodasSecoes, StringBuilder erros) {
+        List<Secao> secoesVazias = new ArrayList<>();
         for (Secao secao : listaTodasSecoes) {
-            if(secao.getQuesitos().isEmpty()) {
-                secoesSemQuesito.add(secao);
+            if(secao.getSubItens().isEmpty()) {
+                secoesVazias.add(secao);
             }
         }
 
-        if(!secoesSemQuesito.isEmpty()) {
-            erros.append("As seguintes seções devem possuir pelo menos um quesito: ");
-            for(Secao secao : secoesSemQuesito) {
-                erros.append(secao.getTitulo() + ", ");
+        if(!secoesVazias.isEmpty()) {
+            erros.append("As seguintes seções devem possuir pelo menos um quesito ou subseção: ");
+            for(Secao secao : secoesVazias) {
+                erros.append(secao.getId() + ", ");
             }
             if (erros.length() > 0) {
                 erros.setLength(erros.length() - 2); // Remove the last ", "
@@ -396,7 +400,7 @@ public class ProntuarioService {
         if(!quesitosObjetivosSemOpcao.isEmpty()) {
             erros.append("Os seguintes quesitos objetivos devem possuir pelo menos uma opção: ");
             for(Quesito quesito : quesitosObjetivosSemOpcao) {
-                erros.append(quesito.getEnunciado() + ", ");
+                erros.append(quesito.getId() + ", ");
             }
             if (erros.length() > 0) {
                 erros.setLength(erros.length() - 2); // Remove the last ", "
@@ -404,6 +408,148 @@ public class ProntuarioService {
             erros.append("\n");
         }
         return erros;
+    }
+
+    private StringBuilder verificaOpcoesComMesmoNome(List<Quesito> listaTodosQuesitos, StringBuilder erros) {
+        for (Quesito quesito : listaTodosQuesitos) {
+            Map<String, Integer> nomeOpcaoCount = new HashMap<>();
+            for (Opcao opcao : quesito.getOpcoes()) {
+                nomeOpcaoCount.put(opcao.getTextoAlternativa(), nomeOpcaoCount.getOrDefault(opcao.getTextoAlternativa(), 0) + 1);
+            }
+
+            List<String> opcoesRepetidas = new ArrayList<>();
+            for (Map.Entry<String, Integer> entry : nomeOpcaoCount.entrySet()) {
+                if (entry.getValue() > 1) {
+                    opcoesRepetidas.add(entry.getKey());
+                }
+            }
+
+            if (!opcoesRepetidas.isEmpty()) {
+                erros.append("O quesito '").append(quesito.getId()).append("' possui opções com nomes repetidos: ");
+                for (String nomeOpcao : opcoesRepetidas) {
+                    erros.append(nomeOpcao).append(", ");
+                }
+                if (erros.length() > 0) {
+                    erros.setLength(erros.length() - 2); // Remove the last ", "
+                }
+                erros.append("\n");
+            }
+        }
+        return erros;
+    }
+
+    private StringBuilder verificaCamposObrigatoriosDeEntidades(Prontuario prontuario, List<Secao> listaTodasSecoes, List<Quesito>listaTodosQuesitos, StringBuilder erros) {
+
+        if (prontuario.getNome() == null || prontuario.getNome().isEmpty()) {
+            erros.append("O prontuário deve possuir um nome.\n");
+        }
+
+        if (prontuario.getDescricao() == null || prontuario.getDescricao().isEmpty()) {
+            erros.append("O prontuário deve possuir uma descrição.\n");
+        }
+        
+        List<Secao> secoesSemNome = new ArrayList<>();
+        List<Quesito> quesitosSemEnunciado = new ArrayList<>();
+        List<Opcao> opcoesSemTextoAlternativa = new ArrayList<>();
+        for (Secao secao : listaTodasSecoes) {
+            if (secao.getTitulo() == null || secao.getTitulo().isEmpty()) {
+                secoesSemNome.add(secao);
+            }
+        }
+        for (Quesito quesito : listaTodosQuesitos) {
+            if (quesito.getEnunciado() == null || quesito.getEnunciado().isEmpty()) {
+                quesitosSemEnunciado.add(quesito);
+            }
+            for (Opcao opcao : quesito.getOpcoes()) {
+                if (opcao.getTextoAlternativa() == null || opcao.getTextoAlternativa().isEmpty()) {
+                    opcoesSemTextoAlternativa.add(opcao);
+                }
+            }
+        }
+        
+        if(!secoesSemNome.isEmpty()) {
+            erros.append("As seguintes seções devem possuir um título: ");
+            for(Secao secao : secoesSemNome) {
+                erros.append(secao.getId() + ", ");
+            }
+            if (erros.length() > 0) {
+                erros.setLength(erros.length() - 2); // Remove the last ", "
+            }
+            erros.append("\n");
+        }
+        if(!quesitosSemEnunciado.isEmpty()) {
+            erros.append("Os seguintes quesitos devem possuir um enunciado: ");
+            for(Quesito quesito : quesitosSemEnunciado) {
+                erros.append(quesito.getId() + ", ");
+            }
+            if (erros.length() > 0) {
+                erros.setLength(erros.length() - 2); // Remove the last ", "
+            }
+            erros.append("\n");
+        }
+
+        if(!opcoesSemTextoAlternativa.isEmpty()) {
+            erros.append("As seguintes opções devem possuir um nome: ");
+            for(Opcao opcao : opcoesSemTextoAlternativa) {
+                erros.append(opcao.getId() + ", ");
+            }
+            if (erros.length() > 0) {
+                erros.setLength(erros.length() - 2); // Remove the last ", "
+            }
+            erros.append("\n");
+        }
+
+        return erros;
+
+    }
+
+    private StringBuilder verificaOrdemOpcoesHabilitadoras(Prontuario prontuario, StringBuilder erros) {
+        List<Quesito> quesitosJaVistos = new ArrayList<>();
+
+        for(Item secao : prontuario.getSecoes()) {
+            quesitosJaVistos.addAll(percorreArvore(secao.getSubItens()));
+        }
+
+        List<Opcao> opcoesJaVistas = new ArrayList<>();
+
+        for(Quesito quesito : quesitosJaVistos) {
+
+            List<Long> opcoesHabilitadorasInvalidas = new ArrayList<>();
+            for(Opcao opcao : quesito.getOpcoesHabilitadoras()) {
+                if(!opcoesJaVistas.contains(opcao)) {
+                    opcoesHabilitadorasInvalidas.add(opcao.getId());
+                }
+            }
+
+            if(!opcoesHabilitadorasInvalidas.isEmpty()) {
+                erros.append("As opções habilitadoras ");
+                erros.append(
+                    String.join(",", opcoesHabilitadorasInvalidas.stream()
+                                                                           .map(Object::toString)
+                                                                           .toArray(String[]::new))
+                );
+                erros.append(" aparecem após o quesito habilitado ").append(quesito.getId()).append("\n");
+            }
+
+            opcoesJaVistas.addAll(quesito.getOpcoes());
+        }
+        
+        return erros;
+    }
+
+    private List<Quesito> percorreArvore(List<Item> itens) {
+
+        List<Quesito> quesitos = new ArrayList<>();
+
+        for(Item item : itens) {
+            if(item instanceof Quesito) {
+                quesitos.add((Quesito) item);
+            } else {
+                quesitos.addAll(percorreArvore(item.getSubItens()));
+            }
+        }
+
+        return quesitos;
     }
 
 }

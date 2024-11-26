@@ -11,6 +11,7 @@ import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Secao;
+import br.ufrn.DASH.model.interfaces.Item;
 import br.ufrn.DASH.repository.SecaoRepository;
 
 @Service
@@ -59,7 +60,13 @@ public class SecaoService {
     public Secao addSubSecao(Long idSuperSecao, Secao subSecao) {
         Secao superSecao = this.getById(idSuperSecao);
         
-        subSecao.setOrdem(superSecao.getSubSecoes().size());
+        List<Item> subItems = superSecao.getSubItens();
+        if(subItems.isEmpty()) {
+            subSecao.setOrdem(1);
+        }
+        else {
+            subSecao.setOrdem(subItems.get(subItems.size() - 1).getOrdem() + 1);
+        }
         subSecao.setNivel(superSecao.getNivel() + 1);
 
         subSecao.setSuperSecao(superSecao);
@@ -72,7 +79,13 @@ public class SecaoService {
     public Quesito addQuesito(Long idSecao, Quesito quesito) {
         Secao secao = this.getById(idSecao);
         
-        quesito.setOrdem(secao.getQuesitos().size());
+        List<Item> subItems = secao.getSubItens();
+        if(subItems.isEmpty()) {
+            quesito.setOrdem(1);
+        }
+        else {
+            quesito.setOrdem(subItems.get(subItems.size() - 1).getOrdem() + 1);
+        }
         quesito.setNivel(secao.getNivel() + 1);
         quesito.setSecao(secao);
         secao.getQuesitos().add(quesito);

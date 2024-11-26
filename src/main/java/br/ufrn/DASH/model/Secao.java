@@ -32,7 +32,7 @@ public class Secao implements GenericEntity, Item{
     private Integer ordem;
     private Integer nivel;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "superSecao")
     private List<Secao> subSecoes = new ArrayList<Secao>();
 
     @ManyToOne
@@ -41,7 +41,7 @@ public class Secao implements GenericEntity, Item{
     @ManyToOne
     private Prontuario prontuario;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "secao")
     private List<Quesito> quesitos = new ArrayList<Quesito>();
 
     public List<Item> getSubItens() {

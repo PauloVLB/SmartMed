@@ -1,5 +1,6 @@
 package br.ufrn.DASH.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,9 @@ import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.Secao;
+import br.ufrn.DASH.model.enums.TipoResposta;
 import br.ufrn.DASH.repository.QuesitoRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class QuesitoService {
@@ -31,6 +34,7 @@ public class QuesitoService {
     @Lazy
     private RespostaService respostaService;
 
+    @Transactional
     public Quesito create(Quesito quesito) {
         return quesitoRepository.save(quesito);
     }
@@ -46,6 +50,7 @@ public class QuesitoService {
             );
     }
 
+    @Transactional
     public Quesito update(Long id, Quesito quesito) {
         Quesito quesitoExistente = this.getById(id);
         
@@ -58,6 +63,7 @@ public class QuesitoService {
         return quesitoRepository.save(quesitoExistente);
     }
 
+    @Transactional
     public void delete(Long id) {
         Quesito quesitoARemover = this.getById(id);
         Secao secao = quesitoARemover.getSecao();
@@ -74,6 +80,7 @@ public class QuesitoService {
         quesitoRepository.deleteById(id);
     }
 
+    @Transactional
     public void deleteAll() {
         List<Quesito> quesitos = this.getAll();
         for (Quesito quesito : quesitos) {
@@ -91,6 +98,7 @@ public class QuesitoService {
         quesitoRepository.deleteAll();
     }
 
+    @Transactional
     public Quesito addSubQuesito(Long idQuesito, Quesito subQuesito) {
         Quesito superQuesito = this.getById(idQuesito);
 
@@ -105,6 +113,7 @@ public class QuesitoService {
         
     }
 
+    @Transactional
     public Opcao addOpcao(Long idQuesito, Opcao opcaoNovo) {
         Quesito quesito = this.getById(idQuesito);
         
@@ -126,8 +135,9 @@ public class QuesitoService {
         Quesito quesito = this.getById(idQuesito);
         
         return quesito.getSubQuesitos();
-    }
+    }   
 
+    @Transactional
     public Opcao addOpcaoHabilitadora(Long idQuesito, Long idOpcao) {
         Quesito quesito = this.getById(idQuesito);
         Opcao opcao = opcaoService.getById(idOpcao);
@@ -182,5 +192,28 @@ public class QuesitoService {
         }
     
         return retorno;
+    }
+
+    public StringBuilder verificaQuesitosObjetivosSemOpcao(List<Quesito> listaTodosQuesitos, StringBuilder erros) {
+        List<Quesito> quesitosObjetivosSemOpcao = new ArrayList<>();
+        for (Quesito quesito : listaTodosQuesitos) {
+            TipoResposta tipoResposta = quesito.getTipoResposta();
+            if ((tipoResposta.equals(TipoResposta.OBJETIVA_SIMPLES) || tipoResposta.equals(TipoResposta.OBJETIVA_SIMPLES))
+            && quesito.getOpcoes().isEmpty()) {
+                quesitosObjetivosSemOpcao.add(quesito);
+            }
+        }
+
+        if(!quesitosObjetivosSemOpcao.isEmpty()) {
+            erros.append("Os seguintes quesitos objetivos devem possuir pelo menos uma opção: ");
+            for(Quesito quesito : quesitosObjetivosSemOpcao) {
+                erros.append(quesito.getId() + ", ");
+            }
+            if (erros.length() > 0) {
+                erros.setLength(erros.length() - 2); // Remove the last ", "
+            }
+            erros.append("\n");
+        }
+        return erros;
     }
 }

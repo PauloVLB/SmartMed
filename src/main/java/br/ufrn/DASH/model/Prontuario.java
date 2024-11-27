@@ -6,11 +6,11 @@ import java.util.List;
 import br.ufrn.DASH.model.interfaces.GenericEntity;
 import br.ufrn.DASH.model.interfaces.ItemUtils;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
@@ -34,7 +34,7 @@ public class Prontuario implements GenericEntity{
     private Boolean ehPublico;
     private Boolean ehTemplate;
 
-    @Column(length = 9999)
+    @Lob
     private String diagnosticoLLM;
 
     @ManyToOne

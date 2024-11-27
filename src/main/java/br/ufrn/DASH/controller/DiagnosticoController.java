@@ -18,7 +18,6 @@ import br.ufrn.DASH.mapper.diagnostico.DiagnosticoCreate;
 import br.ufrn.DASH.mapper.diagnostico.DiagnosticoMapper;
 import br.ufrn.DASH.mapper.diagnostico.DiagnosticoOutput;
 import br.ufrn.DASH.mapper.diagnostico.DiagnosticoUpdate;
-import br.ufrn.DASH.mapper.opcao.OpcaoCreate;
 import br.ufrn.DASH.mapper.opcao.OpcaoMapper;
 import br.ufrn.DASH.mapper.opcao.OpcaoOutput;
 import br.ufrn.DASH.model.Diagnostico;
@@ -92,7 +91,6 @@ public class DiagnosticoController {
 
     @PostMapping("/{idDiagnostico}/opcao/{idOpcao}/removeOpcao")
     public ResponseEntity<OpcaoOutput> removeOpcao(@PathVariable Long idDiagnostico, @PathVariable Long idOpcao) {
-        // removeOpcao é void ou retorna uma opção?
         Opcao opcaoCriado = diagnosticoService.removeOpcao(idDiagnostico, idOpcao);
         OpcaoOutput opcaoOutput = opcaoMapper.toOpcaoOutput(opcaoCriado);
         return new ResponseEntity<OpcaoOutput>(opcaoOutput, HttpStatus.OK);

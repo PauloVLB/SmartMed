@@ -24,11 +24,11 @@ import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.model.Usuario;
-import br.ufrn.DASH.model.enums.TipoResposta;
 import br.ufrn.DASH.model.interfaces.Item;
 
 import static br.ufrn.DASH.model.interfaces.GenericEntitySortById.sortById;
 import br.ufrn.DASH.repository.ProntuarioRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class ProntuarioService {
@@ -49,11 +49,15 @@ public class ProntuarioService {
     private SecaoService secaoService;
 
     @Autowired
+    private OpcaoService opcaoService;
+
+    @Autowired
     private LLMService llmService;
 
     @Autowired
     private DiagnosticoService diagnosticoService;
 
+    @Transactional
     public Prontuario create(Prontuario prontuario) {
         return prontuarioRepository.save(prontuario);
     }
@@ -107,6 +111,7 @@ public class ProntuarioService {
         return quesitosSemDesabilitados;
     }
 
+    @Transactional
     public Prontuario update(Long id, Prontuario prontuario) {
         
         Prontuario prontuarioExistente = this.getById(id);
@@ -119,27 +124,32 @@ public class ProntuarioService {
         return prontuarioRepository.save(prontuarioExistente);
     }
 
+    @Transactional
     public Prontuario tornarPublico(Long id) {
         Prontuario prontuario = this.getById(id);
         prontuario.setEhPublico(true);
         return prontuarioRepository.save(prontuario);
     }
 
+    @Transactional
     public Prontuario tornarPrivado(Long id) {
         Prontuario prontuario = this.getById(id);
         prontuario.setEhPublico(false);
         return prontuarioRepository.save(prontuario);
     }
 
+    @Transactional
     public void delete(Long id) {
         this.getById(id);
         prontuarioRepository.deleteById(id);
     }
 
+    @Transactional
     public void deleteAll() {
         prontuarioRepository.deleteAll();
     }
 
+    @Transactional
     public Secao addSecao(Long idProntuario, Secao secaoNova) {
         Prontuario prontuario = this.getById(idProntuario);
         
@@ -154,6 +164,7 @@ public class ProntuarioService {
         return prontuario.getSecoes().get(prontuario.getSecoes().size() - 1);
     }
 
+    @Transactional
     public Prontuario duplicar(Long idProntuario, Long idUsuario) {
         Prontuario prontuarioToDuplicate = this.getById(idProntuario);
 
@@ -163,6 +174,7 @@ public class ProntuarioService {
         return prontuarioRepository.save(prontuarioDuplicado);
     }
     
+    @Transactional
     public Resposta addResposta(Long idProntuario, Long idQuesito, Resposta respostaNova) {
         Prontuario prontuario = this.getById(idProntuario);
         if(prontuario.getEhTemplate()) {
@@ -190,6 +202,7 @@ public class ProntuarioService {
         return respostaService.create(respostaCriada);
     }
 
+    @Transactional
     public Prontuario addProntuarioFromTemplate(Long idTemplate) {
         Prontuario prontuarioTemplate = this.getById(idTemplate);
         if(!prontuarioTemplate.getEhTemplate()) throw new ProntuarioNotTemplateException(idTemplate);
@@ -198,6 +211,7 @@ public class ProntuarioService {
         return prontuarioRepository.save(prontuarioCriado);
     }
 
+    @Transactional
     public Map<String, String> getDiagnosticoLLM(Long idProntuario) {
         String prompt = 
         "Com base no seguinte JSON, que corresponde a um prontuário de um paciente, faça um diagnóstico do paciente. " + 
@@ -255,6 +269,7 @@ public class ProntuarioService {
         return json.toString();
     }
 
+    @Transactional
     public Diagnostico addDiagnostico(Long idProntuario, Diagnostico diagnostico) {
         Prontuario prontuario = this.getById(idProntuario);
         diagnostico.setProntuario(prontuario);
@@ -267,6 +282,7 @@ public class ProntuarioService {
         return diagnostico;
     }
 
+    @Transactional
     public void removeDiagnostico(Long idProntuario, Long idDiagnostico) {
         Prontuario prontuario = this.getById(idProntuario);
         Diagnostico diagnostico = diagnosticoService.getById(idDiagnostico);
@@ -332,6 +348,7 @@ public class ProntuarioService {
         return true;
     }
 
+    @Transactional
     public Prontuario finalizarProntuario(Long idProntuario) {
         
         Prontuario prontuario = this.getById(idProntuario);       
@@ -358,9 +375,9 @@ public class ProntuarioService {
         StringBuilder erros = new StringBuilder("");
         erros = verificaCamposObrigatoriosDeEntidades(prontuario, listaTodasSecoes, listaTodosQuesitos, erros);
         erros = verificaProntuarioSemSecao(prontuario, erros);
-        erros = verificaSecoesVazias(listaTodasSecoes, erros);
-        erros = verificaQuesitosObjetivosSemOpcao(listaTodosQuesitos, erros);
-        erros = verificaOpcoesComMesmoNome(listaTodosQuesitos, erros);
+        erros = secaoService.verificaSecoesVazias(listaTodasSecoes, erros);
+        erros = quesitoService.verificaQuesitosObjetivosSemOpcao(listaTodosQuesitos, erros);
+        erros = opcaoService.verificaOpcoesComMesmoNome(listaTodosQuesitos, erros);
         erros = verificaOrdemOpcoesHabilitadoras(prontuario, erros);
 
         if (erros.length() > 0) {
@@ -374,78 +391,6 @@ public class ProntuarioService {
     private StringBuilder verificaProntuarioSemSecao(Prontuario prontuario, StringBuilder erros) {
         if (prontuario.getSecoes().isEmpty()) {
             erros.append("O prontuário deve ter pelo menos uma seção.\n");
-        }
-        return erros;
-    }
-
-    private StringBuilder verificaSecoesVazias(List<Secao> listaTodasSecoes, StringBuilder erros) {
-        List<Secao> secoesVazias = new ArrayList<>();
-        for (Secao secao : listaTodasSecoes) {
-            if(secao.getSubItens().isEmpty()) {
-                secoesVazias.add(secao);
-            }
-        }
-
-        if(!secoesVazias.isEmpty()) {
-            erros.append("As seguintes seções devem possuir pelo menos um quesito ou subseção: ");
-            for(Secao secao : secoesVazias) {
-                erros.append(secao.getId() + ", ");
-            }
-            if (erros.length() > 0) {
-                erros.setLength(erros.length() - 2); // Remove the last ", "
-            }
-            erros.append("\n");
-        }
-        return erros;
-    }
-
-    private StringBuilder verificaQuesitosObjetivosSemOpcao(List<Quesito> listaTodosQuesitos, StringBuilder erros) {
-        List<Quesito> quesitosObjetivosSemOpcao = new ArrayList<>();
-        for (Quesito quesito : listaTodosQuesitos) {
-            TipoResposta tipoResposta = quesito.getTipoResposta();
-            if ((tipoResposta.equals(TipoResposta.OBJETIVA_SIMPLES) || tipoResposta.equals(TipoResposta.OBJETIVA_SIMPLES))
-            && quesito.getOpcoes().isEmpty()) {
-                quesitosObjetivosSemOpcao.add(quesito);
-            }
-        }
-
-        if(!quesitosObjetivosSemOpcao.isEmpty()) {
-            erros.append("Os seguintes quesitos objetivos devem possuir pelo menos uma opção: ");
-            for(Quesito quesito : quesitosObjetivosSemOpcao) {
-                erros.append(quesito.getId() + ", ");
-            }
-            if (erros.length() > 0) {
-                erros.setLength(erros.length() - 2); // Remove the last ", "
-            }
-            erros.append("\n");
-        }
-        return erros;
-    }
-
-    private StringBuilder verificaOpcoesComMesmoNome(List<Quesito> listaTodosQuesitos, StringBuilder erros) {
-        for (Quesito quesito : listaTodosQuesitos) {
-            Map<String, Integer> nomeOpcaoCount = new HashMap<>();
-            for (Opcao opcao : quesito.getOpcoes()) {
-                nomeOpcaoCount.put(opcao.getTextoAlternativa(), nomeOpcaoCount.getOrDefault(opcao.getTextoAlternativa(), 0) + 1);
-            }
-
-            List<String> opcoesRepetidas = new ArrayList<>();
-            for (Map.Entry<String, Integer> entry : nomeOpcaoCount.entrySet()) {
-                if (entry.getValue() > 1) {
-                    opcoesRepetidas.add(entry.getKey());
-                }
-            }
-
-            if (!opcoesRepetidas.isEmpty()) {
-                erros.append("O quesito '").append(quesito.getId()).append("' possui opções com nomes repetidos: ");
-                for (String nomeOpcao : opcoesRepetidas) {
-                    erros.append(nomeOpcao).append(", ");
-                }
-                if (erros.length() > 0) {
-                    erros.setLength(erros.length() - 2); // Remove the last ", "
-                }
-                erros.append("\n");
-            }
         }
         return erros;
     }
@@ -512,14 +457,13 @@ public class ProntuarioService {
         }
 
         return erros;
-
     }
 
     private StringBuilder verificaOrdemOpcoesHabilitadoras(Prontuario prontuario, StringBuilder erros) {
         List<Quesito> quesitosJaVistos = new ArrayList<>();
 
         for(Item secao : prontuario.getSecoes()) {
-            quesitosJaVistos.addAll(percorreArvore(secao.getSubItens()));
+            quesitosJaVistos.addAll(percorreProntuario(secao.getSubItens()));
         }
 
         List<Opcao> opcoesJaVistas = new ArrayList<>();
@@ -549,7 +493,7 @@ public class ProntuarioService {
         return erros;
     }
 
-    private List<Quesito> percorreArvore(List<Item> itens) {
+    private List<Quesito> percorreProntuario(List<Item> itens) {
 
         List<Quesito> quesitos = new ArrayList<>();
 
@@ -557,7 +501,7 @@ public class ProntuarioService {
             if(item instanceof Quesito) {
                 quesitos.add((Quesito) item);
             } else {
-                quesitos.addAll(percorreArvore(item.getSubItens()));
+                quesitos.addAll(percorreProntuario(item.getSubItens()));
             }
         }
 

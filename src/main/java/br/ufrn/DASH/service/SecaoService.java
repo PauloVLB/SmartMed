@@ -13,6 +13,7 @@ import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.model.interfaces.Item;
 import br.ufrn.DASH.repository.SecaoRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class SecaoService {
@@ -24,6 +25,7 @@ public class SecaoService {
     @Lazy
     private QuesitoService quesitoService;
 
+    @Transactional
     public Secao create(Secao secao) {
         return secaoRepository.save(secao);
     }
@@ -38,6 +40,7 @@ public class SecaoService {
             );
     }
 
+    @Transactional
     public Secao update(Long id, Secao secao) {
         Secao secaoExistente = this.getById(id);
         
@@ -48,15 +51,18 @@ public class SecaoService {
         return secaoRepository.save(secaoExistente);
     }
 
+    @Transactional
     public void delete(Long id) {
         this.getById(id);
         secaoRepository.deleteById(id);
     }
 
+    @Transactional
     public void deleteAll() {
         secaoRepository.deleteAll();
     }
 
+    @Transactional
     public Secao addSubSecao(Long idSuperSecao, Secao subSecao) {
         Secao superSecao = this.getById(idSuperSecao);
         
@@ -76,6 +82,7 @@ public class SecaoService {
         return superSecao.getSubSecoes().get(superSecao.getSubSecoes().size() - 1);
     }
 
+    @Transactional
     public Quesito addQuesito(Long idSecao, Quesito quesito) {
         Secao secao = this.getById(idSecao);
         
@@ -118,5 +125,26 @@ public class SecaoService {
 
     
         return retorno;
+    }
+
+    public StringBuilder verificaSecoesVazias(List<Secao> listaTodasSecoes, StringBuilder erros) {
+        List<Secao> secoesVazias = new ArrayList<>();
+        for (Secao secao : listaTodasSecoes) {
+            if(secao.getSubItens().isEmpty()) {
+                secoesVazias.add(secao);
+            }
+        }
+
+        if(!secoesVazias.isEmpty()) {
+            erros.append("As seguintes seções devem possuir pelo menos um quesito ou subseção: ");
+            for(Secao secao : secoesVazias) {
+                erros.append(secao.getId() + ", ");
+            }
+            if (erros.length() > 0) {
+                erros.setLength(erros.length() - 2); // Remove the last ", "
+            }
+            erros.append("\n");
+        }
+        return erros;
     }
 }

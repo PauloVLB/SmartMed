@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.ufrn.DASH.mapper.diagnostico.DiagnosticoCreate;
 import br.ufrn.DASH.mapper.diagnostico.DiagnosticoMapper;
 import br.ufrn.DASH.mapper.diagnostico.DiagnosticoOutput;
-import br.ufrn.DASH.mapper.opcao.OpcaoOutput;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioCompleteOutput;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioCreate;
 import br.ufrn.DASH.mapper.prontuario.ProntuarioMapper;
@@ -33,11 +32,9 @@ import br.ufrn.DASH.mapper.secao.SecaoCreate;
 import br.ufrn.DASH.mapper.secao.SecaoMapper;
 import br.ufrn.DASH.mapper.secao.SecaoOutput;
 import br.ufrn.DASH.model.Diagnostico;
-import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Prontuario;
 import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.Secao;
-import br.ufrn.DASH.service.DiagnosticoService;
 import br.ufrn.DASH.service.ProntuarioService;
 
 @RestController

@@ -9,8 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -32,9 +30,6 @@ public class Diagnostico implements GenericEntity{
     private String descricao;
     
     @ManyToMany
-    @JoinTable(name = "diagnostico_opcao_resposta",
-    joinColumns = @JoinColumn(name = "diagnostico_id"),
-    inverseJoinColumns = @JoinColumn(name = "opcao_id"))
     private List<Opcao> opcoesMarcadas = new ArrayList<Opcao>(); 
     
     @ManyToOne

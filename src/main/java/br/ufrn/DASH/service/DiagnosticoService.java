@@ -13,6 +13,7 @@ import br.ufrn.DASH.exception.OpcaoNotInDiagnosticoExecption;
 import br.ufrn.DASH.model.Diagnostico;
 import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.repository.DiagnosticoRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class DiagnosticoService {
@@ -24,6 +25,7 @@ public class DiagnosticoService {
     @Lazy
     private OpcaoService opcaoService;
 
+    @Transactional
     public Diagnostico create(Diagnostico diagnostico) {
         return diagnosticoRepository.save(diagnostico);
     }
@@ -39,6 +41,7 @@ public class DiagnosticoService {
         );
     }
 
+    @Transactional
     public Diagnostico update(Long id, Diagnostico diagnostico) {
         Diagnostico diagnosticoExistente = this.getById(id);
         
@@ -47,14 +50,17 @@ public class DiagnosticoService {
         return diagnosticoRepository.save(diagnosticoExistente);
     }
 
+    @Transactional
     public void delete(Long id) {
         diagnosticoRepository.deleteById(id);
     }
 
+    @Transactional
     public void deleteAll() {
         diagnosticoRepository.deleteAll();
     }
 
+    @Transactional
     public Opcao addOpcao(Long idDiagnostico, Long idOpcao) {
         Diagnostico diagnostico = this.getById(idDiagnostico);
         Opcao opcao = opcaoService.getById(idOpcao);
@@ -73,6 +79,7 @@ public class DiagnosticoService {
         return opcao;
     }
 
+    @Transactional
     public Opcao removeOpcao(Long idDiagnostico, Long idOpcao) {
         Diagnostico diagnostico = this.getById(idDiagnostico);
         Opcao opcao = opcaoService.getById(idOpcao);
@@ -81,6 +88,7 @@ public class DiagnosticoService {
             throw new OpcaoNotInDiagnosticoExecption(idDiagnostico, idOpcao);
         }else{
             diagnostico.getOpcoesMarcadas().remove(opcao);
+            opcao.getDiagnosticos().remove(diagnostico);
             diagnosticoRepository.save(diagnostico);
         }
         return opcao;

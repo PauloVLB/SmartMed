@@ -14,8 +14,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -42,16 +40,13 @@ public class Quesito implements GenericEntity, Item{
     private Integer nivel;
     private TipoResposta tipoResposta;
 
-    @OneToOne(mappedBy = "quesito")
+    @OneToOne(cascade = CascadeType.REMOVE, mappedBy = "quesito")
     private Resposta resposta;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quesito")
     private List<Opcao> opcoes = new ArrayList<Opcao>();
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "quesito_opcao_habilitadora",
-               joinColumns = @JoinColumn(name = "quesito_id"),
-               inverseJoinColumns = @JoinColumn(name = "opcao_id"))
     private List<Opcao> opcoesHabilitadoras = new ArrayList<Opcao>(); 
 
     @ManyToOne

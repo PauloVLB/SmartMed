@@ -34,3 +34,7 @@ llm:
     model: ${LLM_MODEL}
     api-key: ${LLM_API_KEY}
     api-url: ${LLM_API_URL}
+
+jwt:
+    public-key: classpath:app.pub
+    private-key: classpath:app.key

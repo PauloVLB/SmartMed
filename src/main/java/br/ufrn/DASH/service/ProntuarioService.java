@@ -28,6 +28,7 @@ import br.ufrn.DASH.model.interfaces.Item;
 
 import static br.ufrn.DASH.model.interfaces.GenericEntitySortById.sortById;
 import br.ufrn.DASH.repository.ProntuarioRepository;
+import br.ufrn.DASH.utils.Pair;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -170,7 +171,24 @@ public class ProntuarioService {
 
         Usuario novoUsuario = usuarioService.getById(idUsuario);
 
-        Prontuario prontuarioDuplicado = prontuarioToDuplicate.duplicar(novoUsuario);
+        Prontuario prontuarioDuplicado = new Prontuario();
+
+        prontuarioDuplicado.setNome(prontuarioToDuplicate.getNome() + " - Cópia");
+        prontuarioDuplicado.setDescricao(prontuarioToDuplicate.getDescricao());
+        prontuarioDuplicado.setEhPublico(prontuarioToDuplicate.getEhPublico());
+        prontuarioDuplicado.setEhTemplate(prontuarioToDuplicate.getEhTemplate());
+        prontuarioDuplicado.setUsuario(novoUsuario);
+
+        Map<Opcao, Opcao> opcoesDuplicadas = new HashMap<Opcao, Opcao>();
+        for (Secao secao : prontuarioToDuplicate.getSecoes()) {
+            Pair<Secao, Map<Opcao, Opcao>> pairSecaoMapa = secaoService.duplicar(opcoesDuplicadas, secao);
+            Secao novaSecao = pairSecaoMapa.getFirst();
+            opcoesDuplicadas = pairSecaoMapa.getSecond();
+            
+            novaSecao.setProntuario(prontuarioDuplicado);
+            prontuarioDuplicado.getSecoes().add(novaSecao);
+        }
+
         return prontuarioRepository.save(prontuarioDuplicado);
     }
     
@@ -206,7 +224,7 @@ public class ProntuarioService {
     public Prontuario addProntuarioFromTemplate(Long idTemplate) {
         Prontuario prontuarioTemplate = this.getById(idTemplate);
         if(!prontuarioTemplate.getEhTemplate()) throw new ProntuarioNotTemplateException(idTemplate);
-        Prontuario prontuarioCriado = prontuarioTemplate.duplicar(null);
+        Prontuario prontuarioCriado = this.duplicar(prontuarioTemplate.getId(), null);
         prontuarioCriado.setEhTemplate(false);
         return prontuarioRepository.save(prontuarioCriado);
     }

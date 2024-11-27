@@ -2,6 +2,7 @@ package br.ufrn.DASH.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -15,6 +16,7 @@ import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.model.enums.TipoResposta;
 import br.ufrn.DASH.repository.QuesitoRepository;
+import br.ufrn.DASH.utils.Pair;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -215,5 +217,51 @@ public class QuesitoService {
             erros.append("\n");
         }
         return erros;
+    }
+
+    public Pair<Quesito, Map<Opcao, Opcao>> duplicar(Map<Opcao, Opcao> opcoesDuplicadas, Quesito quesitioToDuplicate) {
+        Quesito quesito = new Quesito();
+        quesito.setEnunciado(quesitioToDuplicate.getEnunciado());
+        quesito.setObrigatorio(quesitioToDuplicate.getObrigatorio());
+        quesito.setOrdem(quesitioToDuplicate.getOrdem());
+        quesito.setNivel(quesitioToDuplicate.getNivel());
+        quesito.setTipoResposta(quesitioToDuplicate.getTipoResposta());
+        
+        for(Opcao opcao : quesitioToDuplicate.getOpcoes()) {
+            if(opcoesDuplicadas.containsKey(opcao)) {
+                quesito.getOpcoes().add(opcoesDuplicadas.get(opcao));
+            } else {
+                Opcao novaOpcao = opcaoService.duplicar(opcao);
+                novaOpcao.setQuesito(quesito);
+                quesito.getOpcoes().add(novaOpcao);
+                opcoesDuplicadas.put(opcao, novaOpcao);
+            }
+        }
+
+        for(Opcao opcaoHabilitadora : quesitioToDuplicate.getOpcoesHabilitadoras()) {
+            if(opcoesDuplicadas.containsKey(opcaoHabilitadora)) {
+                quesito.getOpcoesHabilitadoras().add(opcoesDuplicadas.get(opcaoHabilitadora));
+            } else {
+                Opcao novaOpcaoHabilitadora = opcaoService.duplicar(opcaoHabilitadora);
+                novaOpcaoHabilitadora.setQuesito(quesito);
+                quesito.getOpcoesHabilitadoras().add(novaOpcaoHabilitadora);
+                opcoesDuplicadas.put(opcaoHabilitadora, novaOpcaoHabilitadora);
+            }
+        }
+
+        for(Quesito subQuesito : quesitioToDuplicate.getSubQuesitos()) {
+            Pair<Quesito, Map<Opcao, Opcao>> pairQuesitoMapa = this.duplicar(opcoesDuplicadas, subQuesito);
+            Quesito novoSubQuesito = pairQuesitoMapa.getFirst();
+            opcoesDuplicadas = pairQuesitoMapa.getSecond();
+            if(subQuesito.getSecao() != null) {
+                novoSubQuesito.setSecao(quesito.getSecao());
+            }
+            if(subQuesito.getSuperQuesito() != null) {
+                novoSubQuesito.setSuperQuesito(quesito);
+            }
+            quesito.getSubQuesitos().add(novoSubQuesito);
+        }
+
+        return new Pair<Quesito, Map<Opcao, Opcao>>(quesito, opcoesDuplicadas);
     }
 }

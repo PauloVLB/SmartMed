@@ -2,6 +2,7 @@ package br.ufrn.DASH.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -13,6 +14,7 @@ import br.ufrn.DASH.model.Quesito;
 import br.ufrn.DASH.model.Secao;
 import br.ufrn.DASH.model.interfaces.Item;
 import br.ufrn.DASH.repository.SecaoRepository;
+import br.ufrn.DASH.utils.Pair;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -146,5 +148,30 @@ public class SecaoService {
             erros.append("\n");
         }
         return erros;
+    }
+
+    public Pair<Secao, Map<Opcao, Opcao>> duplicar(Map<Opcao, Opcao> opcoesDuplicadas, Secao secaoToDuplicate) {
+        Secao secao = new Secao();
+        secao.setTitulo(secaoToDuplicate.getTitulo());
+        secao.setOrdem(secaoToDuplicate.getOrdem());
+        secao.setNivel(secaoToDuplicate.getNivel());
+
+        for (Secao subSecao : secaoToDuplicate.getSubSecoes()) {
+            Pair<Secao, Map<Opcao, Opcao>> pairSecaoMapa = this.duplicar(opcoesDuplicadas, subSecao);
+            Secao novaSubSecao = pairSecaoMapa.getFirst();
+            opcoesDuplicadas = pairSecaoMapa.getSecond();
+            novaSubSecao.setSuperSecao(secao);
+            secao.getSubSecoes().add(novaSubSecao);
+        }
+
+        for (Quesito quesito : secaoToDuplicate.getQuesitos()) {
+            Pair<Quesito, Map<Opcao, Opcao>> pairQuesitoMapa = quesitoService.duplicar(opcoesDuplicadas, quesito);
+            Quesito novoQuesito = pairQuesitoMapa.getFirst();
+            opcoesDuplicadas = pairQuesitoMapa.getSecond();
+            novoQuesito.setSecao(secao);
+            secao.getQuesitos().add(novoQuesito);
+        }
+
+        return new Pair<Secao, Map<Opcao, Opcao>>(secao, opcoesDuplicadas);
     }
 }

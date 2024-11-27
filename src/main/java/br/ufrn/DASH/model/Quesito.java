@@ -1,8 +1,6 @@
 package br.ufrn.DASH.model;
 
-
 import java.util.List;
-
 import java.util.ArrayList;
 
 import br.ufrn.DASH.model.enums.TipoResposta;
@@ -63,39 +61,6 @@ public class Quesito implements GenericEntity, Item{
         subItens.addAll(this.subQuesitos);
         ItemUtils.ordenar(subItens);
         return subItens;
-    }
-
-    public Quesito duplicar() {
-        Quesito quesito = new Quesito();
-        quesito.setEnunciado(this.enunciado);
-        quesito.setObrigatorio(this.obrigatorio);
-        quesito.setOrdem(this.ordem);
-        quesito.setNivel(this.nivel);
-        quesito.setTipoResposta(this.tipoResposta);
-        
-        for(Opcao opcao : this.opcoes) {
-            Opcao novaOpcao = opcao.duplicar();
-            novaOpcao.setQuesito(quesito);
-            quesito.getOpcoes().add(novaOpcao);
-        }
-
-        for(Opcao opcaoHabilitadora : this.opcoesHabilitadoras) {
-            Opcao novaOpcaoHabilitadora = opcaoHabilitadora.duplicar();
-            quesito.getOpcoesHabilitadoras().add(novaOpcaoHabilitadora);
-        }
-
-        for(Quesito subQuesito : this.subQuesitos) {
-            Quesito novoSubQuesito = subQuesito.duplicar();
-            if(subQuesito.getSecao() != null) {
-                novoSubQuesito.setSecao(quesito.getSecao());
-            }
-            if(subQuesito.getSuperQuesito() != null) {
-                novoSubQuesito.setSuperQuesito(quesito);
-            }
-            quesito.getSubQuesitos().add(novoSubQuesito);
-        }
-
-        return quesito;
     }
 
     public Prontuario getProntuario() {

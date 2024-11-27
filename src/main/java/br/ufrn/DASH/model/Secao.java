@@ -52,27 +52,6 @@ public class Secao implements GenericEntity, Item{
         return subItens;
     }
 
-    public Secao duplicar() {
-        Secao secao = new Secao();
-        secao.setTitulo(this.titulo);
-        secao.setOrdem(this.ordem);
-        secao.setNivel(this.nivel);
-
-        for (Secao subSecao : this.subSecoes) {
-            Secao novaSubSecao = subSecao.duplicar();
-            novaSubSecao.setSuperSecao(secao);
-            secao.getSubSecoes().add(novaSubSecao);
-        }
-
-        for (Quesito quesito : this.quesitos) {
-            Quesito novoQuesito = quesito.duplicar();
-            novoQuesito.setSecao(secao);
-            secao.getQuesitos().add(novoQuesito);
-        }
-
-        return secao;
-    }
-
     public Prontuario getProntuario() {
         if(this.superSecao != null) {
             return this.superSecao.getProntuario();

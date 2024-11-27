@@ -95,4 +95,11 @@ public class OpcaoService {
         return erros;
     }
 
+    public Opcao duplicar(Opcao opcaoToDuplicate) {
+        Opcao opcao = new Opcao();
+        opcao.setTextoAlternativa(opcaoToDuplicate.getTextoAlternativa());
+        opcao.setOrdem(opcaoToDuplicate.getOrdem());
+
+        return opcao;
+    }
 }

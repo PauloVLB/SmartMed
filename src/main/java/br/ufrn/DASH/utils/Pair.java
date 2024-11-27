@@ -1,4 +1,4 @@
-package br.ufrn.DASH.model;
+package br.ufrn.DASH.utils;
 
 import lombok.Getter;
 import lombok.Setter;

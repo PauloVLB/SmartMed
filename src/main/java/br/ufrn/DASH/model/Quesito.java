@@ -1,8 +1,6 @@
 package br.ufrn.DASH.model;
 
-
 import java.util.List;
-import java.util.Map;
 import java.util.ArrayList;
 
 import br.ufrn.DASH.model.enums.TipoResposta;
@@ -63,52 +61,6 @@ public class Quesito implements GenericEntity, Item{
         subItens.addAll(this.subQuesitos);
         ItemUtils.ordenar(subItens);
         return subItens;
-    }
-
-    public Pair<Quesito, Map<Opcao, Opcao>> duplicar(Map<Opcao, Opcao> opcoesDuplicadas) {
-        Quesito quesito = new Quesito();
-        quesito.setEnunciado(this.enunciado);
-        quesito.setObrigatorio(this.obrigatorio);
-        quesito.setOrdem(this.ordem);
-        quesito.setNivel(this.nivel);
-        quesito.setTipoResposta(this.tipoResposta);
-        
-        for(Opcao opcao : this.opcoes) {
-            if(opcoesDuplicadas.containsKey(opcao)) {
-                quesito.getOpcoes().add(opcoesDuplicadas.get(opcao));
-            } else {
-                Opcao novaOpcao = opcao.duplicar();
-                novaOpcao.setQuesito(quesito);
-                quesito.getOpcoes().add(novaOpcao);
-                opcoesDuplicadas.put(opcao, novaOpcao);
-            }
-        }
-
-        for(Opcao opcaoHabilitadora : this.opcoesHabilitadoras) {
-            if(opcoesDuplicadas.containsKey(opcaoHabilitadora)) {
-                quesito.getOpcoesHabilitadoras().add(opcoesDuplicadas.get(opcaoHabilitadora));
-            } else {
-                Opcao novaOpcaoHabilitadora = opcaoHabilitadora.duplicar();
-                novaOpcaoHabilitadora.setQuesito(quesito);
-                quesito.getOpcoesHabilitadoras().add(novaOpcaoHabilitadora);
-                opcoesDuplicadas.put(opcaoHabilitadora, novaOpcaoHabilitadora);
-            }
-        }
-
-        for(Quesito subQuesito : this.subQuesitos) {
-            Pair<Quesito, Map<Opcao, Opcao>> pairQuesitoMapa = subQuesito.duplicar(opcoesDuplicadas);
-            Quesito novoSubQuesito = pairQuesitoMapa.getFirst();
-            opcoesDuplicadas = pairQuesitoMapa.getSecond();
-            if(subQuesito.getSecao() != null) {
-                novoSubQuesito.setSecao(quesito.getSecao());
-            }
-            if(subQuesito.getSuperQuesito() != null) {
-                novoSubQuesito.setSuperQuesito(quesito);
-            }
-            quesito.getSubQuesitos().add(novoSubQuesito);
-        }
-
-        return new Pair<Quesito, Map<Opcao, Opcao>>(quesito, opcoesDuplicadas);
     }
 
     public Prontuario getProntuario() {

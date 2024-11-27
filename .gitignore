@@ -34,3 +34,6 @@ build/
 
 .env
 spring-boot-h2-db.mv.db
+
+app.key
+app.pub

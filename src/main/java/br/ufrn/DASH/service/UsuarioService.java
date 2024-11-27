@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import br.ufrn.DASH.exception.EntityNotFoundException;
 import br.ufrn.DASH.model.Usuario;
 import br.ufrn.DASH.repository.UsuarioRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class UsuarioService {
@@ -15,6 +16,7 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Transactional
     public Usuario create(Usuario usuario) {
         return usuarioRepository.save(usuario);
     }
@@ -29,6 +31,7 @@ public class UsuarioService {
             );
     }
 
+    @Transactional
     public Usuario update(Long id, Usuario usuario) {
         Usuario usuarioExistente = this.getById(id);
         
@@ -40,11 +43,13 @@ public class UsuarioService {
         return usuarioRepository.save(usuarioExistente);
     }
 
+    @Transactional
     public void delete(Long id) {
         this.getById(id);
         usuarioRepository.deleteById(id);
     }
 
+    @Transactional
     public void deleteAll() {
         usuarioRepository.deleteAll();
     }

@@ -13,6 +13,7 @@ import br.ufrn.DASH.model.Opcao;
 import br.ufrn.DASH.model.Resposta;
 import br.ufrn.DASH.model.enums.TipoResposta;
 import br.ufrn.DASH.repository.RespostaRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class RespostaService {
@@ -23,6 +24,7 @@ public class RespostaService {
     @Autowired
     private OpcaoService opcaoService;
 
+    @Transactional
     public Resposta create(Resposta resposta) {
         return respostaRepository.save(resposta);
     }
@@ -37,6 +39,7 @@ public class RespostaService {
             );
     }
 
+    @Transactional
     public Resposta update(Long id, Resposta resposta) {
         Resposta respostaExistente = this.getById(id);
         
@@ -45,15 +48,18 @@ public class RespostaService {
         return respostaRepository.save(respostaExistente);
     }
 
+    @Transactional
     public void delete(Long id) {
         this.getById(id);
         respostaRepository.deleteById(id);
     }
 
+    @Transactional
     public void deleteAll() {
         respostaRepository.deleteAll();
     }
 
+    @Transactional
     public Opcao addOpcaoMarcada(Long idResposta, Long idOpcao) {
         Resposta resposta = this.getById(idResposta);
         Opcao opcao = opcaoService.getById(idOpcao);
@@ -78,6 +84,7 @@ public class RespostaService {
         return resposta.getOpcoesMarcadas().get(resposta.getOpcoesMarcadas().size() - 1);
     }
 
+    @Transactional
     public List<Opcao> setOpcoesMarcadas(Long idResposta, List<Long> idsOpcoes) {
         Resposta resposta = this.getById(idResposta);
         List<Opcao> opcoes = opcaoService.getAllByIds(idsOpcoes);

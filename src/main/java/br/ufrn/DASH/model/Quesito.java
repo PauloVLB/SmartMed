@@ -2,7 +2,7 @@ package br.ufrn.DASH.model;
 
 
 import java.util.List;
-
+import java.util.Map;
 import java.util.ArrayList;
 
 import br.ufrn.DASH.model.enums.TipoResposta;
@@ -65,7 +65,7 @@ public class Quesito implements GenericEntity, Item{
         return subItens;
     }
 
-    public Quesito duplicar() {
+    public Pair<Quesito, Map<Opcao, Opcao>> duplicar(Map<Opcao, Opcao> opcoesDuplicadas) {
         Quesito quesito = new Quesito();
         quesito.setEnunciado(this.enunciado);
         quesito.setObrigatorio(this.obrigatorio);
@@ -74,18 +74,31 @@ public class Quesito implements GenericEntity, Item{
         quesito.setTipoResposta(this.tipoResposta);
         
         for(Opcao opcao : this.opcoes) {
-            Opcao novaOpcao = opcao.duplicar();
-            novaOpcao.setQuesito(quesito);
-            quesito.getOpcoes().add(novaOpcao);
+            if(opcoesDuplicadas.containsKey(opcao)) {
+                quesito.getOpcoes().add(opcoesDuplicadas.get(opcao));
+            } else {
+                Opcao novaOpcao = opcao.duplicar();
+                novaOpcao.setQuesito(quesito);
+                quesito.getOpcoes().add(novaOpcao);
+                opcoesDuplicadas.put(opcao, novaOpcao);
+            }
         }
 
         for(Opcao opcaoHabilitadora : this.opcoesHabilitadoras) {
-            Opcao novaOpcaoHabilitadora = opcaoHabilitadora.duplicar();
-            quesito.getOpcoesHabilitadoras().add(novaOpcaoHabilitadora);
+            if(opcoesDuplicadas.containsKey(opcaoHabilitadora)) {
+                quesito.getOpcoesHabilitadoras().add(opcoesDuplicadas.get(opcaoHabilitadora));
+            } else {
+                Opcao novaOpcaoHabilitadora = opcaoHabilitadora.duplicar();
+                novaOpcaoHabilitadora.setQuesito(quesito);
+                quesito.getOpcoesHabilitadoras().add(novaOpcaoHabilitadora);
+                opcoesDuplicadas.put(opcaoHabilitadora, novaOpcaoHabilitadora);
+            }
         }
 
         for(Quesito subQuesito : this.subQuesitos) {
-            Quesito novoSubQuesito = subQuesito.duplicar();
+            Pair<Quesito, Map<Opcao, Opcao>> pairQuesitoMapa = subQuesito.duplicar(opcoesDuplicadas);
+            Quesito novoSubQuesito = pairQuesitoMapa.getFirst();
+            opcoesDuplicadas = pairQuesitoMapa.getSecond();
             if(subQuesito.getSecao() != null) {
                 novoSubQuesito.setSecao(quesito.getSecao());
             }
@@ -95,7 +108,7 @@ public class Quesito implements GenericEntity, Item{
             quesito.getSubQuesitos().add(novoSubQuesito);
         }
 
-        return quesito;
+        return new Pair<Quesito, Map<Opcao, Opcao>>(quesito, opcoesDuplicadas);
     }
 
     public Prontuario getProntuario() {

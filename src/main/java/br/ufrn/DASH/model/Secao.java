@@ -1,6 +1,7 @@
 package br.ufrn.DASH.model;
 
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
 
 import br.ufrn.DASH.model.interfaces.GenericEntity;
@@ -52,25 +53,29 @@ public class Secao implements GenericEntity, Item{
         return subItens;
     }
 
-    public Secao duplicar() {
+    public Pair<Secao, Map<Opcao, Opcao>> duplicar(Map<Opcao, Opcao> opcoesDuplicadas) {
         Secao secao = new Secao();
         secao.setTitulo(this.titulo);
         secao.setOrdem(this.ordem);
         secao.setNivel(this.nivel);
 
         for (Secao subSecao : this.subSecoes) {
-            Secao novaSubSecao = subSecao.duplicar();
+            Pair<Secao, Map<Opcao, Opcao>> pairSecaoMapa = subSecao.duplicar(opcoesDuplicadas);
+            Secao novaSubSecao = pairSecaoMapa.getFirst();
+            opcoesDuplicadas = pairSecaoMapa.getSecond();
             novaSubSecao.setSuperSecao(secao);
             secao.getSubSecoes().add(novaSubSecao);
         }
 
         for (Quesito quesito : this.quesitos) {
-            Quesito novoQuesito = quesito.duplicar();
+            Pair<Quesito, Map<Opcao, Opcao>> pairQuesitoMapa = quesito.duplicar(opcoesDuplicadas);
+            Quesito novoQuesito = pairQuesitoMapa.getFirst();
+            opcoesDuplicadas = pairQuesitoMapa.getSecond();
             novoQuesito.setSecao(secao);
             secao.getQuesitos().add(novoQuesito);
         }
 
-        return secao;
+        return new Pair<Secao, Map<Opcao, Opcao>>(secao, opcoesDuplicadas);
     }
 
     public Prontuario getProntuario() {

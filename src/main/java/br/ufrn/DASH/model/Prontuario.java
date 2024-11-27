@@ -1,7 +1,9 @@
 package br.ufrn.DASH.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.ufrn.DASH.model.interfaces.GenericEntity;
 import br.ufrn.DASH.model.interfaces.ItemUtils;
@@ -58,8 +60,12 @@ public class Prontuario implements GenericEntity{
         prontuario.setEhTemplate(this.ehTemplate);
         prontuario.setUsuario(novoUsuario);
 
+        Map<Opcao, Opcao> opcoesDuplicadas = new HashMap<Opcao, Opcao>();
         for (Secao secao : this.secoes) {
-            Secao novaSecao = secao.duplicar();
+            Pair<Secao, Map<Opcao, Opcao>> pairSecaoMapa = secao.duplicar(opcoesDuplicadas);
+            Secao novaSecao = pairSecaoMapa.getFirst();
+            opcoesDuplicadas = pairSecaoMapa.getSecond();
+            
             novaSecao.setProntuario(prontuario);
             prontuario.getSecoes().add(novaSecao);
         }
